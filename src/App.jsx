@@ -216,7 +216,7 @@ const EcosystemGrid = () => {
       ref={ref}
       style={{ opacity, y }}
       id="ecosystem" 
-      className="pt-24 md:pt-40 pb-12 px-6"
+      className="pt-24 md:pt-40 pb-12 px-6 overflow-hidden"
     >
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-20 md:mb-40 gap-10 md:gap-16">
@@ -417,7 +417,7 @@ const VisionSection = () => {
           <h2 className="text-4xl sm:text-6xl lg:text-[92px] font-display font-extrabold mb-10 md:mb-14 leading-[1.1] md:leading-[0.98] text-white tracking-[-.05em]">
               <span className="block">Erase</span>
               <span className="block">Friction</span>
-              <span className="text-shine italic block mt-3 whitespace-nowrap">Scale System.</span>
+              <span className="text-shine italic block mt-3 whitespace-normal md:whitespace-nowrap">Scale System.</span>
             </h2>
             <p className="text-xl md:text-2xl text-slate-400 mb-12 md:16 leading-relaxed font-medium max-w-xl">
               We are moving from human labor to <span className="text-white font-bold">synthetic orchestration</span>. Our mission is to accelerate the transition to the Autonomous Era.
@@ -450,7 +450,7 @@ const VisionSection = () => {
 };
 
 const Footer = () => (
-  <footer className="bg-slate-950 pt-24 md:pt-32 pb-24 md:pb-32 px-6">
+  <footer className="bg-slate-950 pt-24 md:pt-32 pb-24 md:pb-32 px-6 overflow-hidden">
     <div className="max-w-7xl mx-auto">
       <div className="grid lg:grid-cols-2 gap-20 md:gap-40 mb-24 md:mb-48">
         <div>
@@ -518,7 +518,7 @@ function App() {
   return (
     <div className="min-h-screen bg-background-dark text-slate-100 flex flex-col font-sans selection:bg-primary selection:text-white">
       <Navbar />
-      <main className="flex-1 relative overflow-hidden">
+      <main className="flex-1 relative overflow-x-hidden">
         <Hero />
         <MarketVision />
         <EcosystemGrid />
