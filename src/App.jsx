@@ -24,8 +24,6 @@ import {
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
@@ -33,7 +31,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-5 lg:px-12 transition-all duration-700 ${scrolled || mobileMenuOpen ? 'bg-slate-950/90 backdrop-blur-2xl border-b border-white/5 shadow-2xl' : 'bg-transparent'}`}>
+    <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-5 lg:px-12 transition-all duration-700 ${scrolled ? 'bg-slate-950/90 backdrop-blur-2xl border-b border-white/5 shadow-2xl' : 'bg-transparent'}`}>
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
@@ -49,47 +47,15 @@ const Navbar = () => {
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="hidden md:flex items-center gap-8 lg:gap-12 text-[10px] font-extrabold uppercase tracking-[0.3em] text-slate-400"
+        className="flex items-center gap-8 lg:gap-12 text-[10px] font-extrabold uppercase tracking-[0.3em] text-slate-400"
       >
         {["Infrastructure", "Protocol", "Vision"].map((link) => (
-          <a key={link} href={`#${link.toLowerCase()}`} className="hover:text-primary transition-all duration-300 relative group">
+          <a key={link} href={`#${link.toLowerCase()}`} className="hover:text-primary transition-all duration-300 relative group hidden md:block">
             {link}
             <span className="absolute -bottom-1 left-0 w-0 h-px bg-primary transition-all duration-300 group-hover:w-full" />
           </a>
         ))}
-        <button className="px-8 py-3 rounded-xl bg-white text-slate-950 font-extrabold text-xs tracking-widest hover:bg-primary hover:text-white transition-all duration-500 shadow-xl">
-          SYSTEM ON
-        </button>
-      </motion.div>
-
-      {/* Mobile Toggle */}
-      <div className="md:hidden z-50">
-        <button 
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="text-white p-2"
-        >
-          {mobileMenuOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
-        </button>
-      </div>
-
-      {/* Mobile Menu Overlay */}
-      <motion.div
-        initial={{ opacity: 0, x: '100%' }}
-        animate={{ opacity: mobileMenuOpen ? 1 : 0, x: mobileMenuOpen ? 0 : '100%' }}
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed inset-0 bg-slate-950 flex flex-col items-center justify-center gap-12 text-[12px] font-extrabold uppercase tracking-[0.4em] text-slate-400 md:hidden pointer-events-auto"
-      >
-        {["Infrastructure", "Protocol", "Vision"].map((link) => (
-          <a 
-            key={link} 
-            href={`#${link.toLowerCase()}`} 
-            onClick={() => setMobileMenuOpen(false)}
-            className="text-white text-2xl hover:text-primary transition-all duration-300"
-          >
-            {link}
-          </a>
-        ))}
-        <button className="px-12 py-5 rounded-2xl bg-primary text-slate-950 font-black text-sm tracking-[0.3em] hover:scale-105 transition-all shadow-[0_0_40px_rgba(255,107,0,0.3)]">
+        <button className="px-6 md:px-8 py-2 md:py-3 rounded-xl bg-white text-slate-950 font-extrabold text-[10px] md:text-xs tracking-widest hover:bg-primary hover:text-white transition-all duration-500 shadow-xl">
           SYSTEM ON
         </button>
       </motion.div>
@@ -471,12 +437,13 @@ const Footer = () => (
             </div>
             <a 
               href="mailto:panshul@tevrixai.com" 
-              className="flex items-center gap-3 group w-fit"
+              className="flex items-center gap-3 group w-fit relative"
             >
-              <div className="p-2 rounded-lg bg-white/5 border border-white/10 group-hover:border-primary/50 transition-colors">
-                <Mail className="w-4 h-4 text-slate-500 group-hover:text-primary transition-colors" />
+              <div className="absolute -inset-2 bg-primary/20 blur-xl rounded-full opacity-50 animate-pulse-glow" />
+              <div className="p-2.5 rounded-lg bg-primary/10 border border-primary/20 group-hover:border-primary/50 transition-all duration-500 shadow-[0_0_20px_rgba(255,107,0,0.2)] relative z-10">
+                <Mail className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
               </div>
-              <span className="text-sm font-bold text-slate-500 group-hover:text-white transition-colors tracking-tight">panshul@tevrixai.com</span>
+              <span className="text-sm font-black text-white group-hover:text-primary transition-colors tracking-tight relative z-10">panshul@tevrixai.com</span>
             </a>
           </div>
         </div>
