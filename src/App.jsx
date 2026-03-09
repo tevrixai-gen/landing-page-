@@ -18,7 +18,8 @@ import {
   Search,
   Key,
   Menu,
-  X
+  X,
+  Mail
 } from 'lucide-react';
 
 const Navbar = () => {
@@ -462,10 +463,21 @@ const Footer = () => (
           <p className="text-xl md:text-2xl text-slate-500 font-medium leading-[1.5] mb-12 md:mb-16 max-w-lg">
             Architecting the future of global enterprise autonomy. Built for high-fidelity execution at massive scale.
           </p>
-          <div className="flex gap-8 md:gap-12">
-            {["TWITTER", "LINKEDIN", "GITHUB"].map((social) => (
-              <span key={social} className="text-[10px] font-extrabold uppercase tracking-[0.4em] text-slate-700 hover:text-primary transition-colors cursor-pointer">{social}</span>
-            ))}
+          <div className="flex flex-col gap-6">
+            <div className="flex gap-8 md:gap-12">
+              {["TWITTER", "LINKEDIN", "GITHUB"].map((social) => (
+                <span key={social} className="text-[10px] font-extrabold uppercase tracking-[0.4em] text-slate-700 hover:text-primary transition-colors cursor-pointer">{social}</span>
+              ))}
+            </div>
+            <a 
+              href="mailto:panshul@tevrixai.com" 
+              className="flex items-center gap-3 group w-fit"
+            >
+              <div className="p-2 rounded-lg bg-white/5 border border-white/10 group-hover:border-primary/50 transition-colors">
+                <Mail className="w-4 h-4 text-slate-500 group-hover:text-primary transition-colors" />
+              </div>
+              <span className="text-sm font-bold text-slate-500 group-hover:text-white transition-colors tracking-tight">panshul@tevrixai.com</span>
+            </a>
           </div>
         </div>
 
