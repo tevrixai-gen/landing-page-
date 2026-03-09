@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Autonomy Engineered Variant 1</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f27f0d",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#0a0908", // Deep obsidian
+                        "slate-custom": "#1a1612",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .grid-overlay {
+            background-image: linear-gradient(to right, rgba(242, 127, 13, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(242, 127, 13, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .hero-gradient {
+            background: linear-gradient(to bottom, #1a1612 0%, #0a0908 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Header -->
+<header class="flex items-center bg-slate-custom dark:bg-background-dark p-4 justify-between border-b border-primary/10 sticky top-0 z-50">
+<div class="text-primary flex size-10 shrink-0 items-center justify-center">
+<span class="material-symbols-outlined text-3xl">grid_view</span>
+</div>
+<h1 class="text-slate-100 text-lg font-bold leading-tight tracking-tight flex-1 ml-3">Tevrix AI</h1>
+<div class="flex w-10 items-center justify-end">
+<button class="flex cursor-pointer items-center justify-center rounded-full size-10 bg-primary/10 text-primary">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<main class="flex-1 relative overflow-hidden">
+<!-- Subtle Grid Overlay -->
+<div class="absolute inset-0 grid-overlay pointer-events-none"></div>
+<!-- Hero Section -->
+<section class="hero-gradient px-6 pt-12 pb-8 relative">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-primary text-[10px] font-bold uppercase tracking-widest">Live Protocol</span>
+</div>
+<h2 class="text-slate-100 text-4xl font-bold leading-[1.1] tracking-tight mb-4">
+                Autonomy <br/><span class="text-primary">Engineered</span>
+</h2>
+<p class="text-slate-400 text-lg max-w-[80%] leading-relaxed">
+                The next generation of high-fidelity synthetic intelligence.
+            </p>
+</section>
+<!-- Feature Cards Container -->
+<div class="px-4 space-y-6 pb-24 relative">
+<!-- Synthetic Workers Card -->
+<div class="group relative overflow-hidden rounded-xl bg-slate-custom border border-primary/10 shadow-2xl transition-all">
+<div class="absolute top-0 right-0 p-4">
+<span class="bg-primary text-background-dark text-[10px] font-black px-2 py-1 rounded uppercase tracking-tighter">Hyper-Scaling</span>
+</div>
+<div class="p-6">
+<div class="size-16 rounded-lg bg-gradient-to-br from-primary to-orange-700 flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(242,127,13,0.3)]">
+<span class="material-symbols-outlined text-4xl text-white">deployed_code</span>
+</div>
+<h3 class="text-2xl font-bold text-white mb-2">Synthetic Workers</h3>
+<p class="text-slate-400 text-base leading-relaxed mb-6">
+                        Deploy high-fidelity autonomous agents designed for exponential operational capacity.
+                    </p>
+<div class="flex items-center justify-between border-t border-primary/5 pt-4">
+<div class="flex -space-x-2">
+<div class="size-8 rounded-full border-2 border-slate-custom bg-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-xs">bolt</span>
+</div>
+<div class="size-8 rounded-full border-2 border-slate-custom bg-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-xs">auto_fix_high</span>
+</div>
+</div>
+<button class="flex items-center gap-2 text-primary font-bold text-sm">
+                            EXPLORE ENGINE <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Multi-agentic Protocol Card (Asymmetrical layout shift) -->
+<div class="group relative overflow-hidden rounded-xl bg-slate-custom border border-primary/10 shadow-2xl ml-4">
+<div class="p-6">
+<div class="flex justify-between items-start mb-4">
+<div class="size-12 rounded-full border border-primary/30 flex items-center justify-center text-primary shadow-[inset_0_0_10px_rgba(242,127,13,0.2)]">
+<span class="material-symbols-outlined text-2xl">shield_lock</span>
+</div>
+<span class="text-primary/60 text-xs font-mono">ID: VAULT-09</span>
+</div>
+<h3 class="text-xl font-bold text-white mb-2">Multi-agentic Protocol</h3>
+<p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        Eliminate operational friction with secure, coordinated agent networks and vault-grade security protocols.
+                    </p>
+<button class="w-full py-3 rounded-lg bg-primary text-background-dark font-bold text-sm tracking-wide flex items-center justify-center gap-2">
+                        VIEW PROTOCOL <span class="material-symbols-outlined text-base">security</span>
+</button>
+</div>
+</div>
+<!-- Visual Decoration / Abstract Image -->
+<div class="h-40 w-full rounded-xl overflow-hidden relative border border-primary/10">
+<div class="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent z-10"></div>
+<div class="absolute inset-0 bg-cover bg-center" data-alt="High-tech 3D abstract nodes and connections in orange and black" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAT-5mId3GL_a8CRc5TrHrbGevdK1UX0SmML9lUFnlFGABfFCIyjtwQPy5tFR4p2BzoM5b9jyniTA9ggl2QcbubQ0MqzpQCL2VUBzkKVpKE1JcoUAnIP1gCTQU4XN5IsWCWAd98sCH6JjuB9zv9C2ajqrX2hjrekRwsE9zai3mJO-Ajl4zsVCSHTwEwc6nzXt14xdFkGw2Q1hkN-Os0AEqgVWgHoc0Pi4hays637j6EVX_ILGo5w_c-1w0QbHC-IgbUzIOPWrQtmwvU')"></div>
+<div class="absolute bottom-4 left-4 z-20">
+<p class="text-[10px] font-bold text-primary tracking-widest uppercase">System Core Status: Optimal</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 z-50 flex border-t border-primary/20 bg-slate-custom/95 backdrop-blur-md px-4 pb-6 pt-3">
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">home</span>
+<p class="text-[10px] font-medium">Home</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">smart_toy</span>
+<p class="text-[10px] font-medium">Agents</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">lock</span>
+<p class="text-[10px] font-medium">Security</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">person</span>
+<p class="text-[10px] font-medium">Profile</p>
+</a>
+</nav>
+</body></html>
