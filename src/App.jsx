@@ -435,26 +435,28 @@ const Footer = () => (
                 <span key={social} className="text-[10px] font-extrabold uppercase tracking-[0.4em] text-slate-700 hover:text-primary transition-colors cursor-pointer">{social}</span>
               ))}
             </div>
-            <a
-              href="mailto:panshul@tevrixai.com"
-              className="flex items-center gap-3 group w-fit relative"
-            >
-              <div className="absolute -inset-2 bg-primary/20 blur-xl rounded-full opacity-50 animate-pulse-glow" />
-              <div className="p-2.5 rounded-lg bg-primary/10 border border-primary/20 group-hover:border-primary/50 transition-all duration-500 shadow-[0_0_20px_rgba(255,107,0,0.2)] relative z-10">
-                <Mail className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
-              </div>
-              <span className="text-sm font-black text-white group-hover:text-primary transition-colors tracking-tight relative z-10">founder- panshul@tevrixai.com</span>
-            </a>
-            <a
-              href="mailto:madhu@tevrixai.com"
-              className="flex items-center gap-3 group w-fit relative"
-            >
-              <div className="absolute -inset-2 bg-primary/20 blur-xl rounded-full opacity-50 animate-pulse-glow" />
-              <div className="p-2.5 rounded-lg bg-primary/10 border border-primary/20 group-hover:border-primary/50 transition-all duration-500 shadow-[0_0_20px_rgba(255,107,0,0.2)] relative z-10">
-                <Mail className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
-              </div>
-              <span className="text-sm font-black text-white group-hover:text-primary transition-colors tracking-tight relative z-10">co founder - madhu@tevrixai.com</span>
-            </a>
+            <div className="flex flex-col xl:flex-row flex-wrap gap-6 xl:gap-10">
+              <a
+                href="mailto:panshul@tevrixai.com"
+                className="flex items-center gap-3 group w-fit relative"
+              >
+                <div className="absolute -inset-2 bg-primary/20 blur-xl rounded-full opacity-50 animate-pulse-glow" />
+                <div className="p-2.5 rounded-lg bg-primary/10 border border-primary/20 group-hover:border-primary/50 transition-all duration-500 shadow-[0_0_20px_rgba(255,107,0,0.2)] relative z-10">
+                  <Mail className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
+                </div>
+                <span className="text-sm font-black text-white group-hover:text-primary transition-colors tracking-tight relative z-10">founder- panshul@tevrixai.com</span>
+              </a>
+              <a
+                href="mailto:madhu@tevrixai.com"
+                className="flex items-center gap-3 group w-fit relative"
+              >
+                <div className="absolute -inset-2 bg-primary/20 blur-xl rounded-full opacity-50 animate-pulse-glow" />
+                <div className="p-2.5 rounded-lg bg-primary/10 border border-primary/20 group-hover:border-primary/50 transition-all duration-500 shadow-[0_0_20px_rgba(255,107,0,0.2)] relative z-10">
+                  <Mail className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
+                </div>
+                <span className="text-sm font-black text-white group-hover:text-primary transition-colors tracking-tight relative z-10">co founder - madhu@tevrixai.com</span>
+              </a>
+            </div>
           </div>
         </div>
 
