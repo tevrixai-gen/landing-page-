@@ -121,10 +121,10 @@ const MarketVision = () => {
   const y = useTransform(scrollYProgress, [0, 0.8], [0, -40]);
 
   return (
-    <motion.section 
+    <motion.section
       ref={ref}
       style={{ opacity, y }}
-      id="vision" 
+      id="vision"
       className="relative pt-24 md:pt-40 pb-12 px-6 bg-black overflow-hidden border-t border-white/5"
     >
       <div className="absolute inset-0 bg-midnight-liquid opacity-40 -z-10" />
@@ -139,7 +139,7 @@ const MarketVision = () => {
           <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-[80px] font-display font-extrabold mb-10 md:mb-12 leading-[1.1] md:leading-[1] text-white tracking-[-0.04em]">
             The Next Generation <br /><span className="text-shine">of AI BPO.</span>
           </h2>
-          
+
           <div className="grid md:grid-cols-2 gap-8 md:gap-12 text-left mb-16 md:20">
             <div className="p-8 md:p-10 rounded-[32px] md:rounded-[40px] bg-slate-custom border border-primary/10 bg-white/5 relative overflow-hidden group shadow-2xl">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
@@ -178,10 +178,10 @@ const EcosystemGrid = () => {
   const y = useTransform(scrollYProgress, [0, 0.8], [0, -40]);
 
   return (
-    <motion.section 
+    <motion.section
       ref={ref}
       style={{ opacity, y }}
-      id="ecosystem" 
+      id="ecosystem"
       className="pt-24 md:pt-40 pb-12 px-6 overflow-hidden"
     >
       <div className="max-w-7xl mx-auto">
@@ -257,12 +257,12 @@ const JoinForm = () => {
     <div className="relative group">
       {/* Decorative Glow behind the form */}
       <div className="absolute -inset-4 bg-primary/20 blur-[100px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000 -z-10" />
-      
+
       <div className="w-full bg-slate-900/40 backdrop-blur-3xl p-8 md:p-10 lg:p-14 rounded-[32px] md:rounded-[48px] border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.5)] relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
-        
+
         {status === "success" ? (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="text-center py-12 md:py-20"
@@ -278,20 +278,20 @@ const JoinForm = () => {
             <div className="grid md:grid-cols-2 gap-6 md:gap-8">
               <div className="space-y-3">
                 <label className="text-[9px] font-black uppercase tracking-[0.5em] text-primary/80 ml-1">Identity // 01</label>
-                <input 
+                <input
                   required
                   name="name"
-                  placeholder="Full Name" 
+                  placeholder="Full Name"
                   className="w-full bg-white/[0.03] border border-white/10 rounded-xl md:rounded-2xl px-5 md:px-6 py-3.5 md:py-4 text-white placeholder:text-slate-600 focus:border-primary/50 focus:bg-white/[0.05] outline-none transition-all font-bold text-sm tracking-tight shadow-inner"
                 />
               </div>
               <div className="space-y-3">
                 <label className="text-[9px] font-black uppercase tracking-[0.5em] text-primary/80 ml-1">Secure Link // 02</label>
-                <input 
+                <input
                   required
                   name="email"
-                  type="email" 
-                  placeholder="Email Address" 
+                  type="email"
+                  placeholder="Email Address"
                   className="w-full bg-white/[0.03] border border-white/10 rounded-xl md:rounded-2xl px-5 md:px-6 py-3.5 md:py-4 text-white placeholder:text-slate-600 focus:border-primary/50 focus:bg-white/[0.05] outline-none transition-all font-bold text-sm tracking-tight shadow-inner"
                 />
               </div>
@@ -300,7 +300,7 @@ const JoinForm = () => {
             <div className="space-y-3">
               <label className="text-[9px] font-black uppercase tracking-[0.5em] text-primary/80 ml-1">Sector // 03</label>
               <div className="relative">
-                <select 
+                <select
                   required
                   name="service"
                   className="w-full bg-white/[0.03] border border-white/10 rounded-xl md:rounded-2xl px-5 md:px-6 py-3.5 md:py-4 text-white outline-none transition-all font-bold text-sm appearance-none focus:border-primary/50 focus:bg-white/[0.05] shadow-inner"
@@ -319,15 +319,15 @@ const JoinForm = () => {
 
             <div className="space-y-3">
               <label className="text-[9px] font-black uppercase tracking-[0.5em] text-primary/80 ml-1">Payload // 04</label>
-              <textarea 
+              <textarea
                 name="message"
-                placeholder="Scale requirements, vision, or technical constraints..." 
+                placeholder="Scale requirements, vision, or technical constraints..."
                 rows="4"
                 className="w-full bg-white/[0.03] border border-white/10 rounded-xl md:rounded-2xl px-5 md:px-6 py-3.5 md:py-4 text-white placeholder:text-slate-600 focus:border-primary/50 focus:bg-white/[0.05] outline-none transition-all font-bold text-sm tracking-tight shadow-inner resize-none"
               />
             </div>
 
-            <button 
+            <button
               disabled={status === "submitting"}
               className="group/btn relative w-full py-4 md:py-5 rounded-xl md:rounded-2xl bg-primary text-slate-950 font-black text-[10px] tracking-[0.5em] uppercase hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-4 shadow-[0_20px_40px_rgba(255,107,0,0.2)] disabled:opacity-50 overflow-hidden"
             >
@@ -335,7 +335,7 @@ const JoinForm = () => {
               <span className="relative z-10">{status === "submitting" ? "TRANSMITTING..." : "JOIN THE REVOLUTION"}</span>
               <ArrowRight className="w-4 h-4 relative z-10 transition-transform group-hover/btn:translate-x-1" />
             </button>
-            
+
             {status === "error" && (
               <p className="text-red-500 text-[9px] font-black text-center uppercase tracking-[0.4em] animate-pulse">Critical Error: Link Aborted. Retry.</p>
             )}
@@ -357,10 +357,10 @@ const VisionSection = () => {
   const y = useTransform(scrollYProgress, [0, 0.8], [0, -40]);
 
   return (
-    <motion.section 
+    <motion.section
       ref={ref}
       style={{ opacity, y }}
-      id="manifesto" 
+      id="manifesto"
       className="pt-24 md:pt-12 pb-24 md:pb-32 px-6 relative bg-slate-950 overflow-hidden border-t border-white/5"
     >
       {/* Cinematic Background Elements */}
@@ -380,7 +380,7 @@ const VisionSection = () => {
             className="text-left"
           >
             <span className="text-primary font-black uppercase tracking-[0.6em] text-[10px] mb-8 md:mb-12 block">PROTOCOL // MANIFESTO</span>
-          <h2 className="text-4xl sm:text-6xl lg:text-[92px] font-display font-extrabold mb-10 md:mb-14 leading-[1.1] md:leading-[0.98] text-white tracking-[-.05em]">
+            <h2 className="text-4xl sm:text-6xl lg:text-[92px] font-display font-extrabold mb-10 md:mb-14 leading-[1.1] md:leading-[0.98] text-white tracking-[-.05em]">
               <span className="block">Erase</span>
               <span className="block">Friction</span>
               <span className="text-shine italic block mt-3 whitespace-normal md:whitespace-nowrap">Scale System.</span>
@@ -400,7 +400,7 @@ const VisionSection = () => {
               </div>
             </div>
           </motion.div>
-          
+
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -435,15 +435,25 @@ const Footer = () => (
                 <span key={social} className="text-[10px] font-extrabold uppercase tracking-[0.4em] text-slate-700 hover:text-primary transition-colors cursor-pointer">{social}</span>
               ))}
             </div>
-            <a 
-              href="mailto:panshul@tevrixai.com" 
+            <a
+              href="mailto:panshul@tevrixai.com"
               className="flex items-center gap-3 group w-fit relative"
             >
               <div className="absolute -inset-2 bg-primary/20 blur-xl rounded-full opacity-50 animate-pulse-glow" />
               <div className="p-2.5 rounded-lg bg-primary/10 border border-primary/20 group-hover:border-primary/50 transition-all duration-500 shadow-[0_0_20px_rgba(255,107,0,0.2)] relative z-10">
                 <Mail className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
               </div>
-              <span className="text-sm font-black text-white group-hover:text-primary transition-colors tracking-tight relative z-10">panshul@tevrixai.com</span>
+              <span className="text-sm font-black text-white group-hover:text-primary transition-colors tracking-tight relative z-10">founder- panshul@tevrixai.com</span>
+            </a>
+            <a
+              href="mailto:madhu@tevrixai.com"
+              className="flex items-center gap-3 group w-fit relative"
+            >
+              <div className="absolute -inset-2 bg-primary/20 blur-xl rounded-full opacity-50 animate-pulse-glow" />
+              <div className="p-2.5 rounded-lg bg-primary/10 border border-primary/20 group-hover:border-primary/50 transition-all duration-500 shadow-[0_0_20px_rgba(255,107,0,0.2)] relative z-10">
+                <Mail className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
+              </div>
+              <span className="text-sm font-black text-white group-hover:text-primary transition-colors tracking-tight relative z-10">co founder - madhu@tevrixai.com</span>
             </a>
           </div>
         </div>
