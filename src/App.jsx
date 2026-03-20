@@ -435,7 +435,7 @@ const Footer = () => (
                 <span key={social} className="text-[10px] font-extrabold uppercase tracking-[0.4em] text-slate-700 hover:text-primary transition-colors cursor-pointer">{social}</span>
               ))}
             </div>
-            <div className="flex flex-col xl:flex-row flex-wrap gap-6 xl:gap-10">
+            <div className="flex flex-row flex-wrap gap-6 md:gap-10">
               <a
                 href="mailto:panshul@tevrixai.com"
                 className="flex items-center gap-3 group w-fit relative"
