@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Zap, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
+import logo from './assets/logo.png';
 
 const NAV_LINKS = [
   { label: 'Platform',   href: '/',         section: '' },
@@ -39,12 +40,7 @@ export default function Navbar({ onDemo }) {
       <nav className="max-w-7xl mx-auto flex items-center justify-between px-6 h-[68px]">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-[10px] bg-amber-500 flex items-center justify-center shadow-[0_4px_14px_rgba(245,158,11,0.4)] group-hover:shadow-[0_4px_24px_rgba(245,158,11,0.6)] transition-all duration-300">
-            <Zap className="text-white w-4 h-4 fill-current" />
-          </div>
-          <span className="font-bold text-[15px] tracking-tight text-slate-900">
-            TEVRIX<span className="text-amber-500">AI</span>
-          </span>
+          <img src={logo} alt="Tevrix AI Logo" className="h-[32px] w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
         </Link>
 
         {/* Desktop links */}

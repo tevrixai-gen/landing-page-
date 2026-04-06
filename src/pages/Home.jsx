@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { BPO_STATS } from '../data';
 import { ServiceCards, SectorCards } from '../Cards';
+import logo from '../assets/logo.png';
 
 /* ============================================================
    MARQUEE STATS TICKER
@@ -561,10 +562,7 @@ const Footer = ({ onDemo }) => (
         {/* Brand + tagline */}
         <div className="lg:col-span-1">
           <div className="flex items-center gap-2.5 mb-5">
-            <div className="w-9 h-9 bg-amber-500 rounded-[10px] flex items-center justify-center shadow-[0_4px_14px_rgba(245,158,11,0.35)]">
-              <Zap className="text-white w-5 h-5 fill-current" />
-            </div>
-            <span className="font-bold text-lg text-slate-900 tracking-tight">TEVRIX.AI</span>
+            <img src={logo} alt="Tevrix AI Logo" className="h-[36px] w-auto object-contain" />
           </div>
           <p className="text-slate-500 leading-relaxed max-w-xs mb-6 text-[14px]">
             India's AI-native BPO platform. Built in Bharat, engineered for the world.
