@@ -38,8 +38,10 @@ export default function Navbar({ onDemo }) {
   return (
     <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${scrolled ? 'glass-nav' : ''}`}>
       <nav className="max-w-7xl mx-auto flex items-center justify-between px-6 h-[68px]">
-        {/* Logo Removed */}
-        <div className="w-[32px]" /> {/* Spacer to maintain layout */}
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-2.5 group">
+          <img src={logo} alt="Tevrix AI Logo" className="h-[32px] w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
+        </Link>
 
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-1">
