@@ -7,7 +7,10 @@ import { SERVICES } from '../data';
 
 /* ── Process Flow Visualization ── */
 const ProcessFlow = ({ steps }) => (
-  <div className="flex flex-col md:flex-row items-start md:items-center gap-0 md:gap-0 overflow-x-auto pb-4">
+  <div className="relative flex flex-col md:flex-row items-stretch md:items-center gap-8 md:gap-0">
+    {/* Mobile vertical connecting line */}
+    <div className="absolute left-[23px] top-6 bottom-6 w-[2px] bg-gradient-to-b from-amber-400/60 to-violet-400/60 md:hidden" />
+
     {steps.map((step, i) => (
       <React.Fragment key={step}>
         <motion.div
@@ -15,15 +18,19 @@ const ProcessFlow = ({ steps }) => (
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: i * 0.12 }}
           viewport={{ once: true }}
-          className="flex flex-col items-center text-center flex-shrink-0 w-36"
+          className="flex flex-row md:flex-col items-center md:text-center gap-5 md:gap-3 z-10"
         >
-          <div className="w-12 h-12 rounded-2xl bg-amber-500 flex items-center justify-center text-white font-bold text-[13px] shadow-[0_8px_24px_rgba(245,158,11,0.3)] mb-3">
+          {/* Number Circle */}
+          <div className="w-12 h-12 rounded-2xl bg-amber-500 flex items-center justify-center text-white font-bold text-[13px] shadow-[0_8px_24px_rgba(245,158,11,0.3)] flex-shrink-0">
             {String(i + 1).padStart(2, '0')}
           </div>
-          <div className="text-[13px] font-semibold text-slate-800 leading-tight">{step}</div>
+          {/* Label */}
+          <div className="text-[14px] md:text-[13px] font-semibold text-slate-800 leading-tight md:w-32">{step}</div>
         </motion.div>
+
+        {/* Desktop horizontal arrow/line */}
         {i < steps.length - 1 && (
-          <div className="hidden md:flex items-center flex-1 min-w-[24px]">
+          <div className="hidden md:flex items-center flex-1 min-w-[32px]">
             <div className="flex-1 h-[2px] bg-gradient-to-r from-amber-300 to-violet-300 opacity-60" />
             <ChevronRight className="w-4 h-4 text-amber-400 flex-shrink-0" />
           </div>

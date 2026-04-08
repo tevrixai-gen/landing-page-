@@ -87,32 +87,36 @@ export default function Navbar({ onDemo }) {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden glass-nav border-t border-black/[0.06] px-6 py-4 space-y-1">
-          {NAV_LINKS.map(link => (
-            link.section ? (
-              <a
-                key={link.label}
-                href={link.href}
-                onClick={e => handleAnchor(e, link)}
-                className="block px-4 py-3 text-[14px] font-medium text-slate-600 hover:text-slate-900 hover:bg-black/[0.03] rounded-xl transition-all duration-200"
-              >
-                {link.label}
-              </a>
-            ) : (
-              <Link
-                key={link.label}
-                to={link.href}
-                onClick={() => setMobileOpen(false)}
-                className="block px-4 py-3 text-[14px] font-medium text-slate-600 hover:text-slate-900 hover:bg-black/[0.03] rounded-xl transition-all"
-              >
-                {link.label}
-              </Link>
-            )
-          ))}
-          <div className="pt-3">
+        <div className="md:hidden glass-nav border-t border-black/[0.08] px-6 py-6 space-y-2 translate-y-0 opacity-100 transition-all duration-300">
+          <div className="flex flex-col gap-1">
+            {NAV_LINKS.map(link => (
+              link.section ? (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  onClick={e => handleAnchor(e, link)}
+                  className="block px-4 py-3.5 text-[15px] font-semibold text-slate-600 hover:text-slate-900 hover:bg-black/[0.04] rounded-xl transition-all duration-200 active:scale-[0.98]"
+                >
+                  {link.label}
+                </a>
+              ) : (
+                <Link
+                  key={link.label}
+                  to={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={`block px-4 py-3.5 text-[15px] font-semibold rounded-xl transition-all duration-200 active:scale-[0.98] ${
+                    location.pathname === link.href ? 'text-amber-600 bg-amber-50/50' : 'text-slate-600 hover:text-slate-900 hover:bg-black/[0.04]'
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              )
+            ))}
+          </div>
+          <div className="pt-4 mt-2 border-t border-black/[0.05]">
             <button
               onClick={() => { setMobileOpen(false); onDemo(); }}
-              className="btn-primary w-full justify-center text-[14px]"
+              className="btn-primary w-full justify-center text-[15px] py-4 shadow-lg shadow-amber-500/10"
             >
               Book a Demo
             </button>

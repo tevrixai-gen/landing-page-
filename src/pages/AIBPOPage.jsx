@@ -134,7 +134,7 @@ const CXJourney = () => {
 
 /* ── HERO ── */
 const Hero = ({ onDemo }) => (
-  <section className="relative min-h-[70vh] flex flex-col items-center justify-center text-center px-6 pt-28 pb-20 overflow-hidden">
+  <section className="relative min-h-[70vh] md:min-h-[70vh] flex flex-col items-center justify-center text-center px-6 pt-24 md:pt-28 pb-16 md:pb-20 overflow-hidden">
     <div className="warm-mesh-bg" />
     <div className="mesh-blob blob-amber" />
     <div className="mesh-blob blob-violet" />
@@ -150,7 +150,7 @@ const Hero = ({ onDemo }) => (
       <motion.h1
         initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-        className="text-6xl md:text-8xl font-bold leading-[0.9] tracking-tighter text-slate-950 mb-8"
+        className="text-5xl sm:text-6xl md:text-8xl font-bold leading-[0.9] tracking-tighter text-slate-950 mb-8"
       >
         AI-Powered BPO.<br />
         <span className="text-gradient-amber">Infinite Scale.</span>
@@ -158,7 +158,7 @@ const Hero = ({ onDemo }) => (
       <motion.p
         initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.22 }}
-        className="text-xl text-slate-500 max-w-2xl mx-auto mb-12 leading-relaxed"
+        className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto mb-10 md:mb-12 leading-relaxed"
       >
         Tevrix AI replaces traditional outsourcing with AI agents that handle customer experience,
         HR, finance, and every repeatable business process — at a fraction of the cost, at 140× the speed.
@@ -180,9 +180,9 @@ const Hero = ({ onDemo }) => (
 
 /* ── What is AI BPO ── */
 const WhatIsBPO = () => (
-  <section className="py-24 px-6">
+  <section className="py-20 md:py-24 px-6">
     <div className="max-w-7xl mx-auto">
-      <div className="grid lg:grid-cols-2 gap-16 items-center">
+      <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
         <motion.div
           initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.85 }} viewport={{ once: true }}
@@ -241,10 +241,10 @@ const WhatIsBPO = () => (
 
 /* ── CX Section ── */
 const CXSection = () => (
-  <section id="cx" className="py-24 px-6 relative overflow-hidden">
+  <section id="cx" className="py-20 md:py-24 px-6 relative overflow-hidden">
     <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_50%,rgba(245,158,11,0.06),transparent)] pointer-events-none" />
     <div className="max-w-7xl mx-auto relative z-10">
-      <div className="text-center mb-20">
+      <div className="text-center mb-16 md:mb-20">
         <span className="label-badge mb-5 inline-flex"><Activity className="w-3.5 h-3.5" /> Customer Experience</span>
         <h2 className="text-4xl md:text-6xl text-slate-950 mb-5">
           CX That Scales<br /><span className="text-gradient-amber">Without Limits.</span>
@@ -255,7 +255,7 @@ const CXSection = () => (
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-20 items-start">
+      <div className="grid lg:grid-cols-2 gap-16 lg:gap-20 items-start">
         {/* CX Journey */}
         <div>
           <h3 className="text-2xl font-bold text-slate-900 mb-10 text-center">The CX Interaction Journey</h3>
@@ -300,9 +300,9 @@ const CXSection = () => (
 
 /* ── FSM Section ── */
 const FSMSection = () => (
-  <section className="py-24 px-6 relative">
+  <section className="py-20 md:py-24 px-6 relative">
     <div className="max-w-7xl mx-auto">
-      <div className="text-center mb-16">
+      <div className="text-center mb-12 md:mb-16">
         <span className="label-badge mb-5 inline-flex"><Cpu className="w-3.5 h-3.5" /> Architecture</span>
         <h2 className="text-4xl md:text-5xl text-slate-950 mb-5">
           Finite State Machine<br /><span className="text-gradient-amber">Architecture.</span>

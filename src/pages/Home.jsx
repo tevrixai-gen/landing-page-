@@ -69,10 +69,12 @@ const Hero = ({ onDemo }) => {
   return (
     <section
       onMouseMove={e => {
-        mx.set((e.clientX - window.innerWidth / 2) * 0.25);
-        my.set((e.clientY - window.innerHeight / 2) * 0.25);
+        if (window.innerWidth >= 768) {
+          mx.set((e.clientX - window.innerWidth / 2) * 0.25);
+          my.set((e.clientY - window.innerHeight / 2) * 0.25);
+        }
       }}
-      className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-28 pb-24 overflow-hidden"
+      className="relative min-h-[90vh] md:min-h-screen flex flex-col items-center justify-center text-center px-6 pt-24 md:pt-28 pb-16 md:pb-24 overflow-hidden"
     >
       <div className="warm-mesh-bg" />
       <div className="mesh-blob blob-amber" />
@@ -112,7 +114,7 @@ const Hero = ({ onDemo }) => {
         <motion.p
           initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.22 }}
-          className="text-xl text-slate-500 max-w-2xl mx-auto mb-12 leading-relaxed"
+          className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto mb-10 md:mb-12 leading-relaxed"
         >
           Tevrix AI is rewriting the rules of outsourcing — replacing entire BPO departments with
           intelligent agents that work 24/7, speak 120+ languages, and deliver results at 140× human speed.
@@ -156,10 +158,10 @@ const Hero = ({ onDemo }) => {
    AI BPO TEASER
    ============================================================ */
 const AIBPOTeaser = () => (
-  <section id="ai-bpo-teaser" className="relative py-32 px-6 overflow-hidden">
+  <section id="ai-bpo-teaser" className="relative py-20 md:py-32 px-6 overflow-hidden">
     <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgba(245,158,11,0.06),transparent)] pointer-events-none" />
     <div className="max-w-7xl mx-auto relative z-10">
-      <div className="grid lg:grid-cols-2 gap-20 items-center">
+      <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
         <motion.div
           initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.85 }} viewport={{ once: true }}
@@ -218,10 +220,10 @@ const AIBPOTeaser = () => (
    SERVICES SECTION
    ============================================================ */
 const ServicesSection = () => (
-  <section id="solutions" className="relative py-32 px-6">
+  <section id="solutions" className="relative py-20 md:py-32 px-6">
     <div className="aurora-section-end" />
     <div className="max-w-7xl mx-auto">
-      <div className="text-center mb-16">
+      <div className="text-center mb-10 md:mb-16">
         <motion.span
           initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
           className="label-badge mb-5 inline-flex"
@@ -432,10 +434,10 @@ const IndiaSection = () => (
    MANIFESTO
    ============================================================ */
 const Manifesto = ({ onDemo }) => (
-  <section id="enterprise" className="relative py-32 px-6 overflow-hidden">
+  <section id="enterprise" className="relative py-20 md:py-32 px-6 overflow-hidden">
     <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgba(245,158,11,0.06),transparent)] pointer-events-none" />
     <div className="max-w-7xl mx-auto relative z-10">
-      <div className="grid lg:grid-cols-2 gap-20 items-center">
+      <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
         <motion.div
           initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }} viewport={{ once: true }}
