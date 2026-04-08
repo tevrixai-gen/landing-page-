@@ -563,9 +563,6 @@ const Footer = ({ onDemo }) => (
 
         {/* Brand + tagline */}
         <div className="lg:col-span-1">
-          <div className="flex items-center gap-2.5 mb-5">
-            <img src={logo} alt="Tevrix AI Logo" className="h-[36px] w-auto object-contain" />
-          </div>
           <p className="text-slate-500 leading-relaxed max-w-xs mb-6 text-[14px]">
             India's AI-native BPO platform. Built in Bharat, engineered for the world.
           </p>
@@ -648,7 +645,7 @@ const Footer = ({ onDemo }) => (
       <div className="gradient-divider mb-8" />
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
         <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">
-          &copy; {new Date().getFullYear()} Tevrix AI · Built with ❤️ in India
+          &copy; {new Date().getFullYear()} <span className="font-bold text-slate-900 tracking-tighter">TEVRIX AI PVT LTD</span> · BUILT WITH ❤️ IN INDIA
         </p>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
