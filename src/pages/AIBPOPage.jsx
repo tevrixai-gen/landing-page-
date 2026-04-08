@@ -193,18 +193,18 @@ const WhatIsBPO = () => (
           </h2>
           <p className="text-lg text-slate-500 leading-relaxed mb-6">
             Business Process Outsourcing (BPO) is a $280 billion industry that moves repetitive
-            business operations — customer service, HR, finance, data entry — to offshore human teams.
+            business operations — customer service, HR, and finance — to offshore human teams, particularly in India.
           </p>
           <p className="text-lg text-slate-500 leading-relaxed mb-8">
-            Tevrix AI replaces those human teams with AI agents. Not chatbots — intelligent, autonomous
-            systems that handle edge cases, adapt over time, and integrate directly into your existing stack.
+            Tevrix AI is India's first AI-native BPO platform. We replace those human teams with autonomous
+            AI agents that handle edge cases, adapt to your specific business logic, and integrate directly into your enterprise stack.
           </p>
           <div className="space-y-3">
             {[
-              '73% of BPO tasks are fully automatable with current AI',
-              '85% cost reduction vs. traditional offshore operations',
+              '73% of BPO tasks in India are fully automatable with current AI',
+              '85% cost reduction vs. traditional offshore BPO operations',
               '140× throughput — AI processes in milliseconds, not minutes',
-              'Zero training time — deployed in weeks, not months',
+              'Built in Bharat — Engineered for global enterprise scale',
             ].map(p => (
               <div key={p} className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
