@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { BPO_STATS } from '../data';
 import { ServiceCards, SectorCards } from '../Cards';
-import logo from '../assets/logo.png';
+import logo from '../assets/tevrix_crystalline_core_1775460305517.png';
 
 /* ============================================================
    MARQUEE STATS TICKER
