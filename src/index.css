@@ -140,6 +140,8 @@
     filter: blur(90px);
     z-index: -9;
     animation: blob-drift 28s ease-in-out infinite;
+    will-change: transform, opacity;
+    transform: translateZ(0);
   }
 
   .blob-amber {
@@ -210,6 +212,8 @@
       radial-gradient(ellipse 80% 85% at 72% 100%, rgba(124,58,237,0.26) 0%, transparent 65%),
       radial-gradient(ellipse 140% 55% at 50% 100%, rgba(251,146,60,0.18) 0%, transparent 70%);
     filter: blur(32px);
+    will-change: transform, opacity;
+    transform: translateZ(0);
   }
 
   /* Section-end aurora: place at the bottom of key sections */
@@ -225,6 +229,8 @@
       radial-gradient(ellipse 65% 100% at 30% 100%, rgba(245,158,11,0.26) 0%, transparent 72%),
       radial-gradient(ellipse 65% 100% at 70% 100%, rgba(124,58,237,0.20) 0%, transparent 72%);
     filter: blur(36px);
+    will-change: transform, opacity;
+    transform: translateZ(0);
   }
 
   /* Footer aurora — curved elliptical sunset arc (Sarvam-style) */
@@ -256,6 +262,8 @@
       radial-gradient(ellipse 40% 50% at 5% 95%, rgba(245,158,11,0.18) 0%, transparent 60%),
       /* Right side violet spill */
       radial-gradient(ellipse 40% 50% at 95% 95%, rgba(124,58,237,0.14) 0%, transparent 60%);
+    will-change: transform, opacity;
+    transform: translateZ(0);
   }
 
   /* Ensure footer content sits above the aurora */
@@ -282,6 +290,8 @@
       radial-gradient(ellipse 45% 55% at 100% 50%, rgba(124,58,237,0.12) 0%, transparent 65%),
       /* Bottom centre warm arc */
       radial-gradient(ellipse 70% 45% at 50% 105%, rgba(245,158,11,0.14) 0%, transparent 65%);
+    will-change: transform, opacity;
+    transform: translateZ(0);
   }
 
   .aurora-contact > * {
