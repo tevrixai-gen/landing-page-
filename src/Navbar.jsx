@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
 const logo = '/logo.png';
 
 const NAV_LINKS = [
@@ -13,7 +12,6 @@ const NAV_LINKS = [
 
 export default function Navbar({ onDemo }) {
   const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -31,15 +29,14 @@ export default function Navbar({ onDemo }) {
       }
       const el = document.getElementById(link.section);
       if (el) el.scrollIntoView({ behavior: 'smooth' });
-      setMobileOpen(false);
     }
   };
 
   return (
-    <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${scrolled ? 'glass-nav' : ''}`}>
+    <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 overflow-hidden ${scrolled ? 'glass-nav' : ''}`}>
       <nav className="max-w-7xl mx-auto flex items-center justify-between px-6 h-[68px]">
-        {/* Logo Removed */}
-        <div className="w-[32px]" />
+        {/* Logo Spacer */}
+        <div className="w-[32px] md:w-[80px]" />
 
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-1">
@@ -69,60 +66,13 @@ export default function Navbar({ onDemo }) {
           ))}
         </div>
 
-        {/* Desktop CTA — just "Book a Demo" */}
-        <div className="hidden md:flex items-center">
-          <button onClick={onDemo} className="btn-primary text-[13px] py-2.5 px-6 rounded-[10px]">
+        {/* CTA — ALWAYS VISIBLE */}
+        <div className="flex items-center">
+          <button onClick={onDemo} className="btn-primary text-[12px] md:text-[13px] py-2 md:py-2.5 px-4 md:px-6 rounded-[10px]">
             Book a Demo
           </button>
         </div>
-
-        {/* Mobile hamburger */}
-        <button
-          className="md:hidden w-9 h-9 flex items-center justify-center rounded-lg text-slate-500 hover:bg-black/[0.05] transition-colors"
-          onClick={() => setMobileOpen(!mobileOpen)}
-        >
-          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
       </nav>
-
-      {/* Mobile menu */}
-      {mobileOpen && (
-        <div className="md:hidden glass-nav border-t border-black/[0.08] px-6 py-6 space-y-2 translate-y-0 opacity-100 transition-all duration-300">
-          <div className="flex flex-col gap-1">
-            {NAV_LINKS.map(link => (
-              link.section ? (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  onClick={e => handleAnchor(e, link)}
-                  className="block px-4 py-3.5 text-[15px] font-semibold text-slate-600 hover:text-slate-900 hover:bg-black/[0.04] rounded-xl transition-all duration-200 active:scale-[0.98]"
-                >
-                  {link.label}
-                </a>
-              ) : (
-                <Link
-                  key={link.label}
-                  to={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={`block px-4 py-3.5 text-[15px] font-semibold rounded-xl transition-all duration-200 active:scale-[0.98] ${
-                    location.pathname === link.href ? 'text-amber-600 bg-amber-50/50' : 'text-slate-600 hover:text-slate-900 hover:bg-black/[0.04]'
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              )
-            ))}
-          </div>
-          <div className="pt-4 mt-2 border-t border-black/[0.05]">
-            <button
-              onClick={() => { setMobileOpen(false); onDemo(); }}
-              className="btn-primary w-full justify-center text-[15px] py-4 shadow-lg shadow-amber-500/10"
-            >
-              Book a Demo
-            </button>
-          </div>
-        </div>
-      )}
     </header>
   );
 }

@@ -592,7 +592,7 @@ const Footer = ({ onDemo }) => (
         </div>
 
         {/* Nav columns */}
-        <div className="lg:col-span-2 grid grid-cols-3 gap-8">
+        <div className="lg:col-span-2 flex flex-col sm:flex-row sm:flex-wrap md:grid md:grid-cols-3 gap-12 lg:gap-8">
           {[
             {
               title: 'Platform',
@@ -622,11 +622,11 @@ const Footer = ({ onDemo }) => (
               ]
             },
           ].map(col => (
-            <div key={col.title}>
+            <div key={col.title} className="min-w-[200px]">
               <h5 className="text-[11px] font-bold text-slate-900 uppercase tracking-[0.15em] mb-5">{col.title}</h5>
               <ul className="space-y-3">
                 {col.links.map(l => (
-                  <li key={l.label}>
+                  <li key={l.label} className="break-all">
                     {l.onClick ? (
                       <button onClick={l.onClick} className="text-[13px] text-slate-500 hover:text-amber-600 transition-colors duration-200 text-left">{l.label}</button>
                     ) : l.href.startsWith('/') ? (
