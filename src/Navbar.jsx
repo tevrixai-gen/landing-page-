@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
-import logo from './assets/tevrix_crystalline_core_1775460305517.png';
+const logo = '/logo.png';
 
 const NAV_LINKS = [
   { label: 'Platform',   href: '/',         section: '' },

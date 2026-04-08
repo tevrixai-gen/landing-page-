@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import { BPO_STATS } from '../data';
 import { ServiceCards, SectorCards } from '../Cards';
-import logo from '../assets/tevrix_crystalline_core_1775460305517.png';
+const logo = '/logo.png';
 
 /* ============================================================
    MARQUEE STATS TICKER
@@ -568,9 +568,8 @@ const Footer = ({ onDemo }) => (
             India's AI-native BPO platform. Built in Bharat, engineered for the world.
           </p>
           <div className="flex gap-4 mb-8">
-            {['Twitter', 'LinkedIn'].map(s => (
-              <a key={s} href="#" className="text-[12px] font-semibold text-slate-400 hover:text-amber-500 transition-colors duration-200 uppercase tracking-widest">{s}</a>
-            ))}
+            <a href="https://x.com/TevrixAi" target="_blank" rel="noopener noreferrer" className="text-[12px] font-semibold text-slate-400 hover:text-amber-500 transition-colors duration-200 uppercase tracking-widest">Twitter</a>
+            <a href="https://www.linkedin.com/company/tevrixai/" target="_blank" rel="noopener noreferrer" className="text-[12px] font-semibold text-slate-400 hover:text-amber-500 transition-colors duration-200 uppercase tracking-widest">LinkedIn</a>
           </div>
 
           {/* Founders */}
