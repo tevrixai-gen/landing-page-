@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Zap, X } from 'lucide-react';
@@ -145,6 +146,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-[#FAFAFA] text-slate-600 font-sans selection:bg-amber-200 selection:text-amber-900">
+        <SpeedInsights />
         <DemoModal isOpen={demoOpen} onClose={closeDemo} />
         <Navbar onDemo={openDemo} />
         <Routes>

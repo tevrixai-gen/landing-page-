@@ -180,7 +180,7 @@ const Hero = ({ onDemo }) => (
 
 /* ── What is AI BPO ── */
 const WhatIsBPO = () => (
-  <section className="py-20 md:py-24 px-6">
+  <section className="py-20 md:py-24 px-6 overflow-hidden">
     <div className="max-w-7xl mx-auto">
       <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
         <motion.div
@@ -300,7 +300,7 @@ const CXSection = () => (
 
 /* ── FSM Section ── */
 const FSMSection = () => (
-  <section className="py-20 md:py-24 px-6 relative">
+  <section className="py-20 md:py-24 px-6 relative overflow-hidden">
     <div className="max-w-7xl mx-auto">
       <div className="text-center mb-12 md:mb-16">
         <span className="label-badge mb-5 inline-flex"><Cpu className="w-3.5 h-3.5" /> Architecture</span>

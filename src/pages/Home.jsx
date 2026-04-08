@@ -220,7 +220,7 @@ const AIBPOTeaser = () => (
    SERVICES SECTION
    ============================================================ */
 const ServicesSection = () => (
-  <section id="solutions" className="relative py-20 md:py-32 px-6">
+  <section id="solutions" className="relative py-20 md:py-32 px-6 overflow-hidden">
     <div className="aurora-section-end" />
     <div className="max-w-7xl mx-auto">
       <div className="text-center mb-10 md:mb-16">
@@ -253,7 +253,7 @@ const ServicesSection = () => (
    SECTORS SECTION — enhanced cards
    ============================================================ */
 const SectorsSection = () => (
-  <section id="sectors" className="relative py-24 px-6">
+  <section id="sectors" className="relative py-24 px-6 overflow-hidden">
     <div className="aurora-section-end" />
     <div className="max-w-7xl mx-auto">
       <div className="text-center mb-14">
@@ -502,7 +502,7 @@ const Contact = () => {
   };
   const inp = "w-full bg-white/60 border border-black/[0.08] rounded-xl px-4 py-3.5 text-slate-900 text-[14px] placeholder:text-slate-400 focus:outline-none focus:border-amber-400 focus:bg-white focus:shadow-[0_0_0_3px_rgba(245,158,11,0.1)] transition-all duration-200";
   return (
-    <section id="contact" className="relative py-24 px-6 aurora-contact">
+    <section id="contact" className="relative py-24 px-6 aurora-contact overflow-hidden">
       <div className="gradient-divider mb-16" />
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-12">
@@ -644,8 +644,8 @@ const Footer = ({ onDemo }) => (
 
       <div className="gradient-divider mb-8" />
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-        <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">
-          &copy; {new Date().getFullYear()} <span className="font-bold text-slate-900 tracking-tighter">TEVRIX AI PVT LTD</span> · BUILT WITH ❤️ IN INDIA
+        <p className="text-[11px] font-bold text-slate-900 uppercase tracking-widest">
+          &copy; {new Date().getFullYear()} TEVRIX AI PVT LTD · BUILT WITH ❤️ IN INDIA
         </p>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
