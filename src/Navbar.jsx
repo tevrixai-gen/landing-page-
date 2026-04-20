@@ -5,6 +5,7 @@ const logo = '/logo.png';
 const NAV_LINKS = [
   { label: 'Platform',   href: '/',         section: '' },
   { label: 'AI BPO',    href: '/ai-bpo',    section: '' },
+  { label: 'About',     href: '/about',     section: '' },
   { label: 'Solutions',  href: '/#solutions', section: 'solutions' },
   { label: 'India',      href: '/#india',    section: 'india' },
   { label: 'Contact',    href: '/#contact',  section: 'contact' },

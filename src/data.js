@@ -140,7 +140,7 @@ export const SECTORS = [
 ];
 
 export const BPO_STATS = [
-  { n: '500+',  l: 'Enterprise Clients' },
+  { n: 'Jan \'26', l: 'India Founded' },
   { n: '99.9%', l: 'Accuracy Rate' },
   { n: '120+',  l: 'Languages Supported' },
   { n: '< 1ms', l: 'Response Latency' },

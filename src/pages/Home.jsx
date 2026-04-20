@@ -139,7 +139,7 @@ const Hero = ({ onDemo }) => {
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.5 }}
           className="mt-14 flex flex-wrap items-center justify-center gap-6 text-slate-400 text-[13px] font-medium"
         >
-          {['500+ Enterprise Clients', 'SOC 2 Certified', '99.99% Uptime', 'GDPR Compliant'].map(t => (
+          {['Building MVP', 'Founded Jan 2026', 'Open for Early Access', 'Built in India'].map(t => (
             <span key={t} className="flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-amber-500" />
               {t}
@@ -575,17 +575,25 @@ const Footer = ({ onDemo }) => (
           <div className="space-y-3">
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Team</div>
             <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center text-[10px] font-bold text-amber-700 flex-shrink-0">P</div>
+              <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center text-[10px] font-bold text-amber-700 flex-shrink-0">PS</div>
               <div>
-                <div className="text-[12px] font-semibold text-slate-700">Panshul — Founder</div>
-                <a href="mailto:panshul@tevrixai.com" className="text-[12px] text-amber-600 hover:text-amber-700 transition-colors">panshul@tevrixai.com</a>
+                <div className="text-[12px] font-semibold text-slate-700">Panshul Sharma — Founder & CEO</div>
+                <div className="flex items-center gap-2">
+                  <a href="mailto:panshul@tevrixai.com" className="text-[12px] text-amber-600 hover:text-amber-700 transition-colors">panshul@tevrixai.com</a>
+                  <span className="text-slate-300">·</span>
+                  <a href="https://www.linkedin.com/in/panshulsharma777/" target="_blank" rel="noopener noreferrer" className="text-[12px] text-slate-400 hover:text-amber-600 transition-colors">LinkedIn</a>
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-violet-100 flex items-center justify-center text-[10px] font-bold text-violet-700 flex-shrink-0">M</div>
+              <div className="w-7 h-7 rounded-lg bg-violet-100 flex items-center justify-center text-[10px] font-bold text-violet-700 flex-shrink-0">MS</div>
               <div>
-                <div className="text-[12px] font-semibold text-slate-700">Madhu — Co-Founder</div>
-                <a href="mailto:madhu@tevrixai.com" className="text-[12px] text-violet-600 hover:text-violet-700 transition-colors">madhu@tevrixai.com</a>
+                <div className="text-[12px] font-semibold text-slate-700">Vempalli Madhu Sai — Co-Founder & COO</div>
+                <div className="flex items-center gap-2">
+                  <a href="mailto:madhu@tevrixai.com" className="text-[12px] text-violet-600 hover:text-violet-700 transition-colors">madhu@tevrixai.com</a>
+                  <span className="text-slate-300">·</span>
+                  <a href="https://www.linkedin.com/in/madhu-sai-vempalli-72205a3b9/" target="_blank" rel="noopener noreferrer" className="text-[12px] text-slate-400 hover:text-violet-600 transition-colors">LinkedIn</a>
+                </div>
               </div>
             </div>
           </div>
@@ -606,10 +614,10 @@ const Footer = ({ onDemo }) => (
             {
               title: 'Company',
               links: [
+                { label: 'About Us', href: '/about' },
                 { label: 'Our Vision', href: '#india' },
                 { label: 'Book a Demo', href: '#', onClick: onDemo },
                 { label: 'Contact Us', href: '#contact' },
-                { label: 'Made in India 🇮🇳', href: '#india' },
               ]
             },
             {
@@ -617,8 +625,8 @@ const Footer = ({ onDemo }) => (
               links: [
                 { label: 'panshul@tevrixai.com', href: 'mailto:panshul@tevrixai.com' },
                 { label: 'madhu@tevrixai.com', href: 'mailto:madhu@tevrixai.com' },
-                { label: 'AI BPO Queries', href: '#contact' },
-                { label: 'Enterprise Sales', href: '#contact' },
+                { label: 'Privacy Policy', href: '/privacy' },
+                { label: 'Terms of Service', href: '/terms' },
               ]
             },
           ].map(col => (

@@ -7,6 +7,9 @@ import './App.css';
 import Home        from './pages/Home';
 import AIBPOPage   from './pages/AIBPOPage';
 import ServicePage from './pages/ServicePage';
+import AboutPage   from './pages/AboutPage';
+import PrivacyPage from './pages/PrivacyPage';
+import TermsPage   from './pages/TermsPage';
 import Navbar      from './Navbar';
 
 /* ── Global Demo Modal (shared between Navbar + pages) ── */
@@ -151,6 +154,9 @@ export default function App() {
           <Route path="/"            element={<Home        onDemo={openDemo} />} />
           <Route path="/ai-bpo"      element={<AIBPOPage   onDemo={openDemo} />} />
           <Route path="/service/:id" element={<ServicePage onDemo={openDemo} />} />
+          <Route path="/about"       element={<AboutPage   onDemo={openDemo} />} />
+          <Route path="/privacy"     element={<PrivacyPage />} />
+          <Route path="/terms"       element={<TermsPage />} />
         </Routes>
       </div>
     </BrowserRouter>
