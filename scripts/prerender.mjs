@@ -99,6 +99,19 @@ const PAGE_META = {
   },
 };
 
+function stripAnimationHiding(html) {
+  // Framer-motion bakes opacity:0 / transform into SSR output.
+  // Google's renderer sees blank content. Strip those initial-state styles
+  // so all content is visible in the static HTML.
+  return html
+    .replace(/style="opacity:\s*0[^"]*"/g, '')
+    .replace(/style="([^"]*?)opacity:\s*0;?\s*/g, 'style="$1')
+    .replace(/style="([^"]*?)transform:\s*translateY\([^)]+\);?\s*/g, 'style="$1')
+    .replace(/style="([^"]*?)transform:\s*translateX\([^)]+\);?\s*/g, 'style="$1')
+    .replace(/style="([^"]*?)transform:\s*scale\([^)]+\);?\s*/g, 'style="$1')
+    .replace(/style=""\s*/g, '');
+}
+
 function injectMeta(html, meta) {
   const { title, description, canonical, ogTitle, ogDescription } = meta;
   const url = canonical;
@@ -123,9 +136,10 @@ for (const route of routes) {
     const meta   = PAGE_META[route] || PAGE_META['/'];
     const appHtml = render(route);
 
+    const visibleHtml = stripAnimationHiding(appHtml);
     let html = template.replace(
       '<div id="root"></div>',
-      `<div id="root">${appHtml}</div>`
+      `<div id="root">${visibleHtml}</div>`
     );
     html = injectMeta(html, meta);
 
