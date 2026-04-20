@@ -5,31 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "postbuild": "react-snap || true",
+    "build": "vite build && vite build --ssr src/entry-server.jsx --outDir dist/server && node scripts/prerender.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
-  },
-  "reactSnap": {
-    "source": "dist",
-    "destinationDir": "dist",
-    "include": [
-      "/",
-      "/about",
-      "/ai-bpo",
-      "/privacy",
-      "/terms",
-      "/service/customer-care",
-      "/service/hr-automation",
-      "/service/financial-analyst",
-      "/service/document-intelligence",
-      "/service/voice-ai",
-      "/service/custom-process"
-    ],
-    "puppeteerArgs": ["--no-sandbox", "--disable-setuid-sandbox"],
-    "skipThirdPartyRequests": true,
-    "headless": true,
-    "concurrency": 1
   },
   "dependencies": {
     "@vercel/speed-insights": "^2.0.0",
@@ -41,7 +19,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
-    "@tailwindcss/postcss": "^4.2.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
@@ -51,8 +28,8 @@
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
     "postcss": "^8.5.8",
-    "react-snap": "^1.23.0",
     "tailwindcss": "^4.2.1",
+    "@tailwindcss/postcss": "^4.2.1",
     "vite": "^7.3.1"
   }
 }
