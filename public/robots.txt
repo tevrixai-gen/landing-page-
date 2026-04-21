@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.tevrixai.com/sitemap.xml
+Sitemap: https://tevrixai.com/sitemap.xml
