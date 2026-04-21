@@ -92,7 +92,7 @@ const Hero = ({ onDemo }) => {
         >
           <span className="label-badge">
             <Sparkles className="w-3.5 h-3.5 fill-current opacity-70" />
-            India's AI-Native BPO Platform
+            AI Customer Care · AI Employees · Built in India
           </span>
         </motion.div>
 
@@ -116,8 +116,8 @@ const Hero = ({ onDemo }) => {
           transition={{ duration: 0.9, delay: 0.22 }}
           className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto mb-10 md:mb-12 leading-relaxed"
         >
-          Tevrix AI is rewriting the rules of outsourcing — replacing entire BPO departments with
-          intelligent agents that work 24/7, speak 120+ languages, and deliver results at 140× human speed.
+          We're building AI that handles every customer interaction — and AI that works as your
+          employees across every department. Starting with customer care, scaling to the entire enterprise.
         </motion.p>
 
         {/* CTAs */}
@@ -127,7 +127,7 @@ const Hero = ({ onDemo }) => {
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
           <Link to="/ai-bpo" className="btn-primary text-[14px]">
-            Explore AI BPO <ArrowRight className="w-4 h-4" />
+            See What We're Building <ArrowRight className="w-4 h-4" />
           </Link>
           <button onClick={onDemo} className="btn-secondary text-[14px]">
             Book a Live Demo
