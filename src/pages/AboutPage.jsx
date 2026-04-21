@@ -13,11 +13,11 @@ const TEAM = [
   },
   {
     name: 'Vempalli Madhu Sai',
-    role: 'Co-Founder & COO',
+    role: 'Co-Founder & CTO',
     init: 'MS',
     color: 'bg-violet-100 text-violet-700',
     linkedin: 'https://www.linkedin.com/in/madhu-sai-vempalli-72205a3b9/',
-    bio: "Joined as Co-Founder in January 2026 to lead operations and product strategy. Focused on building the systems, processes, and partnerships that will scale Tevrix AI from MVP to global enterprise deployments.",
+    bio: "Joined as Co-Founder & CTO in January 2026 to lead product and technology. Focused on building the AI infrastructure, technical architecture, and engineering systems that will scale Tevrix AI from MVP to global enterprise deployments.",
   },
 ];
 

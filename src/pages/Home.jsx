@@ -4,7 +4,7 @@ import { motion, useMotionValue, useTransform } from 'framer-motion';
 import {
   Zap, Sparkles, ArrowRight, CheckCircle, TrendingUp,
   Cpu, Globe, Activity, Lock, Mail, ChevronRight,
-  Flag, Users, Mic, BarChart3
+  Flag, Users, Mic, BarChart3, Bot, Headphones
 } from 'lucide-react';
 import { BPO_STATS } from '../data';
 import { ServiceCards, SectorCards } from '../Cards';
@@ -153,6 +153,110 @@ const Hero = ({ onDemo }) => {
     </section>
   );
 };
+
+/* ============================================================
+   WHAT WE ARE BUILDING
+   ============================================================ */
+const WhatWeAreBuilding = () => (
+  <section className="relative py-20 md:py-28 px-6 overflow-hidden">
+    <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_50%,rgba(245,158,11,0.04),transparent)] pointer-events-none" />
+    <div className="max-w-7xl mx-auto relative z-10">
+      <div className="text-center mb-14">
+        <motion.span
+          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+          className="label-badge mb-5 inline-flex"
+        >
+          <Sparkles className="w-3.5 h-3.5 fill-current opacity-70" /> Our Focus
+        </motion.span>
+        <motion.h2
+          initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          className="text-5xl md:text-6xl text-slate-950 mb-5"
+        >
+          What We're Building.
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} viewport={{ once: true }}
+          className="text-lg text-slate-500 max-w-2xl mx-auto"
+        >
+          Two distinct tracks. One company. Starting focused, scaling with precision.
+        </motion.p>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
+
+        {/* Track 1 — AI Customer Experience */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }} viewport={{ once: true }}
+          className="card-3d card-bpo p-8 md:p-10 flex flex-col"
+        >
+          <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-200 flex items-center justify-center mb-6">
+            <Headphones className="w-5 h-5 text-amber-600" />
+          </div>
+          <div className="text-[10px] font-bold text-amber-600 uppercase tracking-widest mb-3">Track 01 · Live & Scaling</div>
+          <h3 className="text-2xl font-bold text-slate-950 mb-4 leading-tight">
+            AI Customer Experience<br />
+            <span className="text-gradient-amber">→ AI BPO</span>
+          </h3>
+          <p className="text-slate-500 text-[15px] leading-relaxed mb-6">
+            We started with AI Customer Care — the single highest-volume, highest-cost operation in any business.
+            We're perfecting it, then scaling horizontally: e-commerce first, then banking, healthcare, telecom, and beyond.
+            As we expand across sectors, it becomes a full AI BPO for customer experience.
+          </p>
+          <div className="flex flex-wrap gap-2 mt-auto">
+            {['AI Customer Care', 'E-Commerce', 'Banking', 'Healthcare', 'Telecom', 'Full AI BPO'].map((tag, i) => (
+              <span
+                key={tag}
+                className="text-[11px] font-semibold px-3 py-1 rounded-full border"
+                style={{
+                  background: i === 5 ? 'rgba(245,158,11,0.1)' : 'rgba(0,0,0,0.03)',
+                  borderColor: i === 5 ? 'rgba(245,158,11,0.3)' : 'rgba(0,0,0,0.07)',
+                  color: i === 5 ? '#D97706' : '#64748B',
+                }}
+              >
+                {i === 0 ? '✓ ' : i === 5 ? '→ ' : ''}{tag}
+              </span>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Track 2 — AI Employees */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.1 }} viewport={{ once: true }}
+          className="card-3d p-8 md:p-10 flex flex-col"
+          style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.03) 0%, rgba(245,158,11,0.02) 100%)' }}
+        >
+          <div className="w-12 h-12 rounded-xl bg-violet-500/10 border border-violet-200 flex items-center justify-center mb-6">
+            <Bot className="w-5 h-5 text-violet-600" />
+          </div>
+          <div className="text-[10px] font-bold text-violet-600 uppercase tracking-widest mb-3">Track 02 · The Bigger Vision</div>
+          <h3 className="text-2xl font-bold text-slate-950 mb-4 leading-tight">
+            AI Employees —<br />
+            <span className="text-gradient-amber">The Future Workforce</span>
+          </h3>
+          <p className="text-slate-500 text-[15px] leading-relaxed mb-6">
+            Beyond customer care — AI agents that work inside your company as permanent members of every department.
+            An AI HR lead sourcing and hiring 24/7. An AI Compliance officer that never misses a clause.
+            An AI Finance analyst closing books in real time. Not software tools — actual employees.
+          </p>
+          <div className="flex flex-wrap gap-2 mt-auto">
+            {['AI HR', 'AI Compliance', 'AI Finance', 'AI Legal', 'Any Department', 'Any Sector'].map((tag) => (
+              <span
+                key={tag}
+                className="text-[11px] font-semibold px-3 py-1 rounded-full border"
+                style={{ background: 'rgba(124,58,237,0.05)', borderColor: 'rgba(124,58,237,0.15)', color: '#6D28D9' }}
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </motion.div>
+
+      </div>
+    </div>
+  </section>
+);
 
 /* ============================================================
    AI BPO TEASER
@@ -588,7 +692,7 @@ const Footer = ({ onDemo }) => (
             <div className="flex items-center gap-2.5">
               <div className="w-7 h-7 rounded-lg bg-violet-100 flex items-center justify-center text-[10px] font-bold text-violet-700 flex-shrink-0">MS</div>
               <div>
-                <div className="text-[12px] font-semibold text-slate-700">Vempalli Madhu Sai — Co-Founder & COO</div>
+                <div className="text-[12px] font-semibold text-slate-700">Vempalli Madhu Sai — Co-Founder & CTO</div>
                 <div className="flex items-center gap-2">
                   <a href="mailto:madhu@tevrixai.com" className="text-[12px] text-violet-600 hover:text-violet-700 transition-colors">madhu@tevrixai.com</a>
                   <span className="text-slate-300">·</span>
@@ -676,6 +780,7 @@ export default function Home({ onDemo }) {
     <main>
       <Hero onDemo={onDemo} />
       <StatsTicker />
+      <WhatWeAreBuilding />
       <AIBPOTeaser />
       <ServicesSection />
       <SectorsSection />
