@@ -13,7 +13,6 @@ const removeFmOverride = () => {
 document.addEventListener('scroll', removeFmOverride, { passive: true, once: true });
 document.addEventListener('click', removeFmOverride, { once: true });
 document.addEventListener('touchstart', removeFmOverride, { once: true });
-setTimeout(removeFmOverride, 10000);
 
 const rootElement = document.getElementById('root');
 const app = (
