@@ -73,32 +73,32 @@ const DemoModal = ({ isOpen, onClose }) => {
                     </p>
                   </div>
 
-                  <form onSubmit={handle} className="space-y-4">
+                    <form onSubmit={handle} className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1.5">Full Name</label>
-                        <input required name="name" placeholder="Your Name" className={inp} />
+                        <label htmlFor="demo-name" className="block text-[10px] font-semibold text-slate-600 uppercase tracking-widest mb-1.5">Full Name</label>
+                        <input id="demo-name" required name="name" placeholder="Your Name" className={inp} />
                       </div>
                       <div>
-                        <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1.5">Work Email</label>
-                        <input required name="email" type="email" placeholder="you@company.com" className={inp} />
+                        <label htmlFor="demo-email" className="block text-[10px] font-semibold text-slate-600 uppercase tracking-widest mb-1.5">Work Email</label>
+                        <input id="demo-email" required name="email" type="email" placeholder="you@company.com" className={inp} />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1.5">Company</label>
-                        <input name="company" placeholder="Your Company" className={inp} />
+                        <label htmlFor="demo-company" className="block text-[10px] font-semibold text-slate-600 uppercase tracking-widest mb-1.5">Company</label>
+                        <input id="demo-company" name="company" placeholder="Your Company" className={inp} />
                       </div>
                       <div>
-                        <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1.5">Phone</label>
-                        <input name="phone" type="tel" placeholder="+91 XXXXX XXXXX" className={inp} />
+                        <label htmlFor="demo-phone" className="block text-[10px] font-semibold text-slate-600 uppercase tracking-widest mb-1.5">Phone</label>
+                        <input id="demo-phone" name="phone" type="tel" placeholder="+91 XXXXX XXXXX" className={inp} />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1.5">I'm interested in</label>
-                      <select required name="service" className={inp} defaultValue="">
+                      <label htmlFor="demo-service" className="block text-[10px] font-semibold text-slate-600 uppercase tracking-widest mb-1.5">I'm interested in</label>
+                      <select id="demo-service" required name="service" className={inp} defaultValue="">
                         <option value="" disabled>Choose a module...</option>
                         {['AI BPO — Full Platform', 'AI Customer Care', 'AI HR Automation', 'AI Financial Intelligence', 'Document Intelligence', 'Custom Process Design'].map(o => (
                           <option key={o}>{o}</option>
@@ -107,8 +107,8 @@ const DemoModal = ({ isOpen, onClose }) => {
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1.5">Anything specific? (Optional)</label>
-                      <textarea name="message" rows={3} placeholder="Tell us the process you want to automate..." className={inp + ' resize-none'} />
+                      <label htmlFor="demo-message" className="block text-[10px] font-semibold text-slate-600 uppercase tracking-widest mb-1.5">Anything specific? (Optional)</label>
+                      <textarea id="demo-message" name="message" rows={3} placeholder="Tell us the process you want to automate..." className={inp + ' resize-none'} />
                     </div>
 
                     <button

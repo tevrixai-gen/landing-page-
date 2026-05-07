@@ -137,7 +137,7 @@ const Hero = ({ onDemo }) => {
         {/* Trust micro-copy */}
         <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.5 }}
-          className="mt-14 flex flex-wrap items-center justify-center gap-6 text-slate-400 text-[13px] font-medium"
+          className="mt-14 flex flex-wrap items-center justify-center gap-6 text-slate-500 text-[13px] font-medium"
         >
           {['Building MVP', 'Founded Jan 2026', 'Open for Early Access', 'Built in India'].map(t => (
             <span key={t} className="flex items-center gap-2">
@@ -282,7 +282,7 @@ const AIBPOTeaser = () => (
             centers handling the same queries, day after day. We're replacing every repeatable
             process with AI that delivers superior CX at a fraction of the cost.
           </p>
-          <p className="text-lg text-slate-400 leading-relaxed mb-10">
+          <p className="text-lg text-slate-500 leading-relaxed mb-10">
             Reception, HR, finance, customer support, document processing — every department,
             automated. Tevrix AI is the operating system for the post-human enterprise.
           </p>
@@ -507,7 +507,7 @@ const IndiaSection = () => (
                     <span className="text-slate-500 text-[13px] font-medium">{r.label}</span>
                     <span className={`text-xl font-bold tracking-tight ${r.color}`}>{r.value}</span>
                   </div>
-                  <div className="text-[11px] text-slate-400">{r.sub}</div>
+                  <div className="text-[11px] text-slate-500">{r.sub}</div>
                 </div>
               ))}
             </div>
@@ -555,19 +555,19 @@ const Manifesto = ({ onDemo }) => (
             Every rupee you spend on a human doing a task AI can do is a rupee you're wasting. Salary, office space,
             training, night-shift premiums, attrition, replacements — it adds up to crores every year for a mid-sized company.
           </p>
-          <p className="text-lg text-slate-400 mb-12 leading-relaxed">
+          <p className="text-lg text-slate-500 mb-12 leading-relaxed">
             Tevrix AI doesn't just automate tasks. It eliminates entire cost categories.
           </p>
           <div className="grid grid-cols-2 gap-4 pt-8 border-t border-black/[0.06]">
             <div className="stat-card">
-              <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-2">Per-Hour Rate</div>
+              <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-widest mb-2">Per-Hour Rate</div>
               <div className="flex items-baseline gap-2">
                 <span className="text-2xl font-bold text-emerald-500">₹50</span>
                 <span className="text-slate-400 text-[13px] line-through">₹200/hr</span>
               </div>
             </div>
             <div className="stat-card">
-              <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-2">Works 24/7</div>
+              <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-widest mb-2">Works 24/7</div>
               <div className="text-slate-900 font-bold text-[15px]">No shift premium. <span className="text-emerald-500">Ever.</span></div>
             </div>
           </div>
@@ -755,24 +755,24 @@ const Contact = () => {
             <form onSubmit={handle} className="space-y-5">
               <div className="grid md:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-2">Full Name</label>
-                  <input required name="name" placeholder="Your Name" className={inp} />
+                  <label htmlFor="contact-name" className="block text-[11px] font-semibold text-slate-600 uppercase tracking-widest mb-2">Full Name</label>
+                  <input id="contact-name" required name="name" placeholder="Your Name" className={inp} />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-2">Work Email</label>
-                  <input required name="email" type="email" placeholder="name@company.com" className={inp} />
+                  <label htmlFor="contact-email" className="block text-[11px] font-semibold text-slate-600 uppercase tracking-widest mb-2">Work Email</label>
+                  <input id="contact-email" required name="email" type="email" placeholder="name@company.com" className={inp} />
                 </div>
               </div>
               <div>
-                <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-2">Area of Interest</label>
-                <select required name="service" className={inp}>
+                <label htmlFor="contact-service" className="block text-[11px] font-semibold text-slate-600 uppercase tracking-widest mb-2">Area of Interest</label>
+                <select id="contact-service" required name="service" className={inp}>
                   <option value="" disabled>Select department...</option>
                   {['AI BPO (Full Deployment)', 'AI Customer Care', 'AI HR Automation', 'Financial Intelligence', 'Custom Enterprise'].map(o => <option key={o}>{o}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-2">Requirements</label>
-                <textarea name="message" rows={4} placeholder="Tell us about your business processes to automate..." className={inp + ' resize-none'} />
+                <label htmlFor="contact-message" className="block text-[11px] font-semibold text-slate-600 uppercase tracking-widest mb-2">Requirements</label>
+                <textarea id="contact-message" name="message" rows={4} placeholder="Tell us about your business processes to automate..." className={inp + ' resize-none'} />
               </div>
               <button type="submit" disabled={status === 'sending'} className="btn-primary w-full justify-center py-4 text-[14px]">
                 {status === 'sending' ? 'Sending...' : 'Send Message'} <ArrowRight className="w-4 h-4" />
@@ -799,13 +799,13 @@ const Footer = ({ onDemo }) => (
             India's AI-native BPO platform. Built in Bharat, engineered for the world.
           </p>
           <div className="flex gap-4 mb-8">
-            <a href="https://x.com/TevrixAi" target="_blank" rel="noopener noreferrer" className="text-[12px] font-semibold text-slate-400 hover:text-amber-500 transition-colors duration-200 uppercase tracking-widest">Twitter</a>
-            <a href="https://www.linkedin.com/company/tevrixai/" target="_blank" rel="noopener noreferrer" className="text-[12px] font-semibold text-slate-400 hover:text-amber-500 transition-colors duration-200 uppercase tracking-widest">LinkedIn</a>
+            <a href="https://x.com/TevrixAi" target="_blank" rel="noopener noreferrer" className="text-[12px] font-semibold text-slate-500 hover:text-amber-500 transition-colors duration-200 uppercase tracking-widest">Twitter</a>
+            <a href="https://www.linkedin.com/company/tevrixai/" target="_blank" rel="noopener noreferrer" className="text-[12px] font-semibold text-slate-500 hover:text-amber-500 transition-colors duration-200 uppercase tracking-widest">LinkedIn</a>
           </div>
 
           {/* Founders */}
           <div className="space-y-3">
-            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Team</div>
+            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Team</div>
             <div className="flex items-center gap-2.5">
               <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center text-[10px] font-bold text-amber-700 flex-shrink-0">PS</div>
               <div>
@@ -813,7 +813,7 @@ const Footer = ({ onDemo }) => (
                 <div className="flex items-center gap-2">
                   <a href="mailto:panshul@tevrixai.com" className="text-[12px] text-amber-600 hover:text-amber-700 transition-colors">panshul@tevrixai.com</a>
                   <span className="text-slate-300">·</span>
-                  <a href="https://www.linkedin.com/in/panshulsharma777/" target="_blank" rel="noopener noreferrer" className="text-[12px] text-slate-400 hover:text-amber-600 transition-colors">LinkedIn</a>
+                  <a href="https://www.linkedin.com/in/panshulsharma777/" target="_blank" rel="noopener noreferrer" className="text-[12px] text-slate-500 hover:text-amber-600 transition-colors">LinkedIn</a>
                 </div>
               </div>
             </div>
@@ -824,7 +824,7 @@ const Footer = ({ onDemo }) => (
                 <div className="flex items-center gap-2">
                   <a href="mailto:madhu@tevrixai.com" className="text-[12px] text-violet-600 hover:text-violet-700 transition-colors">madhu@tevrixai.com</a>
                   <span className="text-slate-300">·</span>
-                  <a href="https://www.linkedin.com/in/madhu-sai-vempalli-72205a3b9/" target="_blank" rel="noopener noreferrer" className="text-[12px] text-slate-400 hover:text-violet-600 transition-colors">LinkedIn</a>
+                  <a href="https://www.linkedin.com/in/madhu-sai-vempalli-72205a3b9/" target="_blank" rel="noopener noreferrer" className="text-[12px] text-slate-500 hover:text-violet-600 transition-colors">LinkedIn</a>
                 </div>
               </div>
             </div>
@@ -863,7 +863,7 @@ const Footer = ({ onDemo }) => (
             },
           ].map(col => (
             <div key={col.title} className="min-w-[200px]">
-              <h5 className="text-[11px] font-bold text-slate-900 uppercase tracking-[0.15em] mb-5">{col.title}</h5>
+              <h6 className="text-[11px] font-bold text-slate-900 uppercase tracking-[0.15em] mb-5">{col.title}</h6>
               <ul className="space-y-3">
                 {col.links.map(l => (
                   <li key={l.label} className="break-all">
@@ -890,10 +890,10 @@ const Footer = ({ onDemo }) => (
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <span className="glow-dot" />
-            <span className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">All Systems Operational</span>
+            <span className="text-[11px] font-medium text-slate-500 uppercase tracking-widest">All Systems Operational</span>
           </div>
           <span className="text-slate-300">·</span>
-          <span className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">🇮🇳 Made in India</span>
+          <span className="text-[11px] font-medium text-slate-500 uppercase tracking-widest">🇮🇳 Made in India</span>
         </div>
       </div>
     </div>

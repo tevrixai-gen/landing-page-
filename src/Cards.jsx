@@ -116,7 +116,7 @@ export function ServiceCards() {
                 <div className={`text-xl font-bold tracking-tight ${svc.color === 'violet' ? 'stat-gradient-violet' : 'stat-gradient-amber'}`}>
                   {svc.stat1.n}
                 </div>
-                <div className="text-[11px] text-slate-400 font-medium mt-0.5">{svc.stat1.l}</div>
+                <div className="text-[11px] text-slate-500 font-medium mt-0.5">{svc.stat1.l}</div>
               </div>
               <button
                 onClick={() => navigate(`/service/${svc.id}`)}
@@ -182,7 +182,7 @@ export function SectorCards() {
                   <div className={`text-[20px] font-bold leading-none mb-0.5 ${isAmber ? 'stat-gradient-amber' : 'stat-gradient-violet'}`}>
                     {meta.stat}
                   </div>
-                  <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">
+                  <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">
                     {meta.label}
                   </div>
                 </div>
