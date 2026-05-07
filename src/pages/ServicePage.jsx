@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, ArrowLeft, CheckCircle, Zap, ChevronRight, Globe } from 'lucide-react';
+import { ArrowRight, ArrowLeft, CheckCircle, Zap, ChevronRight, Globe, Sparkles } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 import { SERVICES } from '../data';
 
@@ -78,11 +78,17 @@ export default function ServicePage({ onDemo }) {
         <div className="relative z-10 max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-            className="flex justify-center mb-8"
+            className="flex flex-col items-center gap-3 mb-8"
           >
             <span className={`label-badge ${isViolet ? 'label-badge-violet' : ''}`}>
               {svc.tag} Module
             </span>
+            {svc.launchBadge && (
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[12px] font-bold uppercase tracking-widest">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                {svc.launchBadge}
+              </span>
+            )}
           </motion.div>
 
           <motion.div
@@ -114,7 +120,7 @@ export default function ServicePage({ onDemo }) {
             className="flex flex-wrap gap-4 justify-center"
           >
             <button onClick={onDemo} className="btn-primary text-[14px]">
-              Request a Demo <ArrowRight className="w-4 h-4" />
+              {svc.ctaLabel || 'Request a Demo'} <ArrowRight className="w-4 h-4" />
             </button>
             <button
               onClick={() => navigate(-1)}
@@ -145,6 +151,47 @@ export default function ServicePage({ onDemo }) {
           <div className="gradient-divider mt-12" />
         </div>
       </section>
+
+      {/* ── FEATURES GRID (only if svc.features defined) ── */}
+      {svc.features && (
+        <section className="py-20 px-6 relative overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_30%,rgba(124,58,237,0.05),transparent)] pointer-events-none" />
+          <div className="max-w-6xl mx-auto relative z-10">
+            <div className="text-center mb-14">
+              <span className="label-badge label-badge-violet mb-5 inline-flex">
+                <Sparkles className="w-3.5 h-3.5" /> Everything Included
+              </span>
+              <h2 className="text-4xl md:text-5xl text-slate-950 mb-4">
+                Every Feature.<br /><span className="text-gradient-amber">One Platform.</span>
+              </h2>
+              <p className="text-slate-500 text-lg max-w-xl mx-auto">
+                No integrations. No third-party tools. Every capability is built in-house and works together seamlessly.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {svc.features.map((f, i) => {
+                const FIcon = LucideIcons[f.icon] || LucideIcons.Zap;
+                return (
+                  <motion.div
+                    key={f.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.08 }}
+                    viewport={{ once: true }}
+                    className="card-3d p-7"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center mb-5">
+                      <FIcon className="w-5 h-5 text-violet-600" />
+                    </div>
+                    <h3 className="text-[16px] font-bold text-slate-900 mb-2">{f.title}</h3>
+                    <p className="text-slate-500 text-[14px] leading-relaxed">{f.desc}</p>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── PROCESS FLOW ── */}
       <section className="py-20 px-6">
@@ -237,7 +284,7 @@ export default function ServicePage({ onDemo }) {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button onClick={onDemo} className="btn-primary text-[15px] py-4 px-10">
-                Request Deployment Demo <ArrowRight className="w-4 h-4" />
+                {svc.ctaLabel || 'Request Deployment Demo'} <ArrowRight className="w-4 h-4" />
               </button>
               <Link to="/ai-bpo" className="btn-secondary text-[15px] py-4 px-10">
                 Learn About AI BPO
