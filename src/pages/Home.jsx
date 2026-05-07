@@ -332,7 +332,7 @@ const ServicesSection = () => (
           initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
           className="label-badge mb-5 inline-flex"
         >
-          <Cpu className="w-3.5 h-3.5" /> AI Modules
+          <Cpu className="w-3.5 h-3.5" /> Two Visions. Six AI Agents.
         </motion.span>
         <motion.h2
           initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
@@ -342,10 +342,11 @@ const ServicesSection = () => (
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} viewport={{ once: true }}
-          className="text-lg text-slate-500 max-w-xl mx-auto"
+          className="text-lg text-slate-500 max-w-2xl mx-auto"
         >
-          Six modular AI agents, each purpose-built for a BPO vertical.
-          Click any module to explore the technology and ROI in detail.
+          <span className="font-semibold text-amber-600">AI Customer Operations</span> — AI that faces your customers across every channel, 24/7.{' '}
+          <span className="font-semibold text-violet-600">AI Employees</span> — AI that works inside your company across every department.
+          Two visions. Six agents. One subscription.
         </motion.p>
       </div>
       <ServiceCards />
