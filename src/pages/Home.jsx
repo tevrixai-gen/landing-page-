@@ -547,24 +547,28 @@ const Manifesto = ({ onDemo }) => (
           initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }} viewport={{ once: true }}
         >
-          <span className="label-badge mb-8 inline-flex"><Activity className="w-3.5 h-3.5" /> Manifesto</span>
+          <span className="label-badge mb-8 inline-flex"><Activity className="w-3.5 h-3.5" /> Why It Matters</span>
           <h2 className="text-5xl md:text-6xl text-slate-950 mb-8">
-            Erase Operational<br /><span className="text-gradient-amber">Friction.</span>
+            Stop Paying for<br /><span className="text-gradient-amber">Repetition.</span>
           </h2>
-          <p className="text-xl text-slate-500 mb-12 leading-relaxed">
-            The Autonomous Era is here. We're shifting the global enterprise from human labor to
-            synthetic orchestration at planetary scale — starting from India.
+          <p className="text-xl text-slate-500 mb-8 leading-relaxed">
+            Every rupee you spend on a human doing a task AI can do is a rupee you're wasting. Salary, office space,
+            training, night-shift premiums, attrition, replacements — it adds up to crores every year for a mid-sized company.
+          </p>
+          <p className="text-lg text-slate-400 mb-12 leading-relaxed">
+            Tevrix AI doesn't just automate tasks. It eliminates entire cost categories.
           </p>
           <div className="grid grid-cols-2 gap-4 pt-8 border-t border-black/[0.06]">
             <div className="stat-card">
-              <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-2">System Status</div>
-              <div className="flex items-center gap-2 text-slate-900 font-semibold">
-                <span className="glow-dot" /> Operational
+              <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-2">Per-Hour Rate</div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-2xl font-bold text-emerald-500">₹50</span>
+                <span className="text-slate-400 text-[13px] line-through">₹200/hr</span>
               </div>
             </div>
             <div className="stat-card">
-              <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-2">Protocol Latency</div>
-              <div className="text-slate-900 font-semibold font-mono">&lt; 0.001 MS</div>
+              <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-2">Works 24/7</div>
+              <div className="text-slate-900 font-bold text-[15px]">No shift premium. <span className="text-emerald-500">Ever.</span></div>
             </div>
           </div>
         </motion.div>
@@ -572,17 +576,46 @@ const Manifesto = ({ onDemo }) => (
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }} viewport={{ once: true }}
-          className="card-3d p-10 text-center"
+          className="card-3d p-8"
         >
-          <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-8">
-            <Lock className="text-amber-600 w-7 h-7" />
+          <div className="text-[11px] font-bold text-amber-600 uppercase tracking-widest mb-6">
+            Cost of a 10-Person Team / Month
           </div>
-          <h3 className="text-2xl font-bold text-slate-900 mb-4">Secure Your Node</h3>
-          <p className="text-slate-500 mb-8 leading-relaxed">
-            Early access slots are limited. Integrate Tevrix protocols into your enterprise before your competitors do.
-          </p>
+          <div className="space-y-4 mb-8">
+            {[
+              { label: 'Salaries',               trad: '₹2,50,000', ai: '₹0',      saving: '100%' },
+              { label: 'Office & Infrastructure', trad: '₹80,000',  ai: '₹0',      saving: '100%' },
+              { label: 'Training & Onboarding',   trad: '₹40,000',  ai: '₹0',      saving: '100%' },
+              { label: 'Night Shift Premium',      trad: '₹30,000',  ai: '₹0',      saving: '100%' },
+              { label: 'Attrition & Replacement', trad: '₹25,000',  ai: '₹0',      saving: '100%' },
+              { label: 'Tevrix AI Subscription',  trad: '—',         ai: '₹40,000', saving: null,  isAi: true },
+            ].map((row) => (
+              <div key={row.label} className={`flex items-center justify-between py-2.5 border-b border-black/[0.05] last:border-0 ${row.isAi ? 'pt-4' : ''}`}>
+                <span className="text-slate-600 text-[13px] font-medium">{row.label}</span>
+                <div className="flex items-center gap-4">
+                  {row.trad !== '—' && <span className="text-[13px] text-slate-400 line-through">{row.trad}</span>}
+                  <span className={`text-[14px] font-bold ${row.isAi ? 'text-amber-500' : 'text-emerald-500'}`}>{row.ai}</span>
+                  {row.saving && (
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">
+                      -{row.saving}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 mb-6 flex items-center justify-between">
+            <div>
+              <div className="text-[11px] font-bold text-emerald-700 uppercase tracking-widest mb-0.5">Monthly Saving</div>
+              <div className="text-2xl font-bold text-emerald-600">₹3,85,000</div>
+            </div>
+            <div className="text-right">
+              <div className="text-[11px] font-bold text-emerald-700 uppercase tracking-widest mb-0.5">Annual Saving</div>
+              <div className="text-2xl font-bold text-emerald-600">₹46L+</div>
+            </div>
+          </div>
           <button onClick={onDemo} className="btn-primary w-full justify-center py-4 text-[14px]">
-            Request Early Access <ArrowRight className="w-4 h-4" />
+            Get Early Access <ArrowRight className="w-4 h-4" />
           </button>
         </motion.div>
       </div>
