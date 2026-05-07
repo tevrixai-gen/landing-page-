@@ -398,12 +398,109 @@ const SectorsOnBPO = () => (
   </section>
 );
 
+/* ── Cost Comparison Section ── */
+const CostComparison = () => (
+  <section className="py-20 md:py-24 px-6 relative overflow-hidden">
+    <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgba(16,185,129,0.05),transparent)] pointer-events-none" />
+    <div className="max-w-6xl mx-auto relative z-10">
+      <div className="text-center mb-14">
+        <span className="label-badge mb-5 inline-flex"><TrendingUp className="w-3.5 h-3.5" /> The Economics</span>
+        <h2 className="text-4xl md:text-5xl text-slate-950 mb-4">
+          What AI BPO<br /><span className="text-gradient-amber">Actually Costs.</span>
+        </h2>
+        <p className="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
+          Traditional BPO charges ₹200–250/hr per human agent — and that's before infrastructure, training,
+          attrition, and night-shift premiums. Here's what happens when you switch.
+        </p>
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-8 mb-10">
+        {/* Traditional BPO */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+          className="card-3d p-8 border-red-200/60"
+        >
+          <div className="text-[11px] font-bold text-red-500 uppercase tracking-widest mb-6">Traditional BPO — 10-Agent Team / Month</div>
+          <div className="space-y-3">
+            {[
+              { label: 'Agent salaries (₹25,000 × 10)', value: '₹2,50,000' },
+              { label: 'Office & infrastructure', value: '₹80,000' },
+              { label: 'Training & onboarding', value: '₹40,000' },
+              { label: 'Night shift & weekend premium', value: '₹30,000' },
+              { label: 'Attrition & replacement cost', value: '₹25,000' },
+              { label: 'Management overhead', value: '₹20,000' },
+            ].map(r => (
+              <div key={r.label} className="flex justify-between items-center py-2 border-b border-black/[0.05] last:border-0">
+                <span className="text-slate-500 text-[13px]">{r.label}</span>
+                <span className="text-slate-700 font-semibold text-[14px]">{r.value}</span>
+              </div>
+            ))}
+            <div className="flex justify-between items-center pt-4 mt-2">
+              <span className="font-bold text-slate-900">Total Monthly Cost</span>
+              <span className="text-2xl font-bold text-red-500">₹4,45,000</span>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Tevrix AI */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+          className="card-3d p-8 border-emerald-200/60 bg-gradient-to-br from-emerald-50/40 to-white"
+        >
+          <div className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest mb-6">Tevrix AI BPO — Same Output / Month</div>
+          <div className="space-y-3">
+            {[
+              { label: 'AI agents (unlimited capacity)', value: '—', sub: 'included' },
+              { label: 'Infrastructure', value: '—', sub: 'cloud-native' },
+              { label: 'Training', value: '—', sub: 'self-learning' },
+              { label: 'Night / weekend / holiday', value: '—', sub: '24/7 by default' },
+              { label: 'Attrition', value: '—', sub: 'zero' },
+              { label: 'Management overhead', value: '—', sub: 'minimal' },
+            ].map(r => (
+              <div key={r.label} className="flex justify-between items-center py-2 border-b border-black/[0.05] last:border-0">
+                <span className="text-slate-500 text-[13px]">{r.label}</span>
+                <div className="text-right">
+                  <span className="text-slate-300 text-[13px] line-through mr-2">{r.value}</span>
+                  <span className="text-emerald-600 font-semibold text-[13px]">{r.sub}</span>
+                </div>
+              </div>
+            ))}
+            <div className="flex justify-between items-center pt-4 mt-2">
+              <span className="font-bold text-slate-900">Tevrix Subscription</span>
+              <span className="text-2xl font-bold text-emerald-600">₹40,000</span>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Summary Row */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+        className="grid grid-cols-3 gap-5"
+      >
+        {[
+          { label: 'Monthly Saving', value: '₹4,05,000', sub: 'vs. traditional BPO team' },
+          { label: 'Annual Saving', value: '₹48.6L+', sub: 'every year, recurring' },
+          { label: 'Cost Reduction', value: '91%', sub: 'same output, zero headcount' },
+        ].map(s => (
+          <div key={s.label} className="card-3d p-6 text-center bg-emerald-50/50 border-emerald-200/50">
+            <div className="text-3xl font-bold text-emerald-600 mb-1">{s.value}</div>
+            <div className="text-[12px] font-bold text-emerald-700 uppercase tracking-wide mb-1">{s.label}</div>
+            <div className="text-[11px] text-slate-400">{s.sub}</div>
+          </div>
+        ))}
+      </motion.div>
+    </div>
+  </section>
+);
+
 /* ── AI BPO PAGE ROOT ── */
 export default function AIBPOPage({ onDemo }) {
   return (
     <main>
       <Hero onDemo={onDemo} />
       <WhatIsBPO />
+      <CostComparison />
       <CXSection />
       <FSMSection />
       <ServicesOnBPO />

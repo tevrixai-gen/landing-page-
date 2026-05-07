@@ -20,6 +20,15 @@ export const SERVICES = [
     ],
     sectors: ['E-Commerce', 'Telecom', 'Banking', 'Healthcare', 'SaaS', 'Retail'],
     flow: ['Customer Query', 'Intent Detection', 'Context Retrieval', 'Resolution Engine', 'Response & Follow-up'],
+    costSaving: {
+      items: [
+        { label: 'Traditional call center agent', value: '₹200/hr', strike: true },
+        { label: 'Tevrix AI Customer Care', value: '₹50/hr', highlight: true },
+        { label: 'No shifts, no overtime, no attrition', value: '24/7', accent: true },
+      ],
+      saving: '75%',
+      savingLabel: 'cost reduction vs. traditional BPO',
+    },
   },
   {
     id: 'hr-automation',
@@ -63,6 +72,15 @@ export const SERVICES = [
     ],
     sectors: ['Startups', 'Scale-ups', 'Enterprise HR Teams', 'IT & Tech Companies', 'Staffing Firms', 'Any Company That Hires'],
     flow: ['AI Job Description', 'CV Parsing (1000s)', 'Coding Assessment', 'AI Proctored Interview', 'Score & Shortlist Top 5'],
+    costSaving: {
+      items: [
+        { label: 'Average cost-per-hire (India)', value: '₹1L+', strike: true },
+        { label: 'With Tevrix AI HR', value: '<₹5,000', highlight: true },
+        { label: 'Recruiter hours saved per hire', value: '40+ hrs', accent: true },
+      ],
+      saving: '95%',
+      savingLabel: 'cost-per-hire reduction on subscription',
+    },
   },
   {
     id: 'financial-analyst',
@@ -84,6 +102,15 @@ export const SERVICES = [
     ],
     sectors: ['Banking', 'Accounting Firms', 'E-Commerce', 'Healthcare', 'Logistics', 'Manufacturing'],
     flow: ['Data Ingestion', 'Transaction Parsing', 'Categorization & Rules', 'Reconciliation', 'Report Generation'],
+    costSaving: {
+      items: [
+        { label: 'In-house finance team (3 people)', value: '₹4L/mo', strike: true },
+        { label: 'Tevrix AI Financial Analyst', value: '₹50,000/mo', highlight: true },
+        { label: 'Zero overtime, zero errors from fatigue', value: '99.8%', accent: true },
+      ],
+      saving: '80%',
+      savingLabel: 'finance operations cost reduction',
+    },
   },
   {
     id: 'document-intelligence',
@@ -105,6 +132,15 @@ export const SERVICES = [
     ],
     sectors: ['Legal Firms', 'Insurance', 'Real Estate', 'Banking', 'Government', 'Healthcare'],
     flow: ['Document Intake', 'OCR & Parsing', 'AI Classification', 'Data Extraction', 'Route & Archive'],
+    costSaving: {
+      items: [
+        { label: 'Manual document processing', value: '₹150/hr', strike: true },
+        { label: 'Tevrix AI Document Intelligence', value: '₹12/hr', highlight: true },
+        { label: 'Accuracy vs. manual (error-prone)', value: '99% vs 82%', accent: true },
+      ],
+      saving: '92%',
+      savingLabel: 'cost reduction vs. manual processing',
+    },
   },
   {
     id: 'voice-ai',
@@ -126,6 +162,15 @@ export const SERVICES = [
     ],
     sectors: ['Healthcare (Appointment)', 'Banking (Collections)', 'E-Commerce (Order Updates)', 'Telecom', 'Insurance'],
     flow: ['Incoming Call', 'Voice-to-Text (STT)', 'Intent Recognition', 'Response Generation', 'Text-to-Speech (TTS)'],
+    costSaving: {
+      items: [
+        { label: 'Inbound call center agent', value: '₹200/hr', strike: true },
+        { label: 'Tevrix AI Voice Agent', value: '₹35/hr', highlight: true },
+        { label: 'Handles 10,000 calls simultaneously', value: '10K+', accent: true },
+      ],
+      saving: '82%',
+      savingLabel: 'cost reduction vs. human call agents',
+    },
   },
   {
     id: 'custom-process',
@@ -147,6 +192,15 @@ export const SERVICES = [
     ],
     sectors: ['Any Industry', 'Unique Operations', 'High-Volume Back Office', 'Compliance-Heavy Sectors'],
     flow: ['Discovery Sprint', 'Process Mapping', 'Agent Architecture', 'Integration & QA', 'Deployment & Monitor'],
+    costSaving: {
+      items: [
+        { label: 'Current process (human team)', value: 'Baseline', strike: true },
+        { label: 'After Tevrix custom automation', value: '-60–90%', highlight: true },
+        { label: 'Average year-one ROI', value: '3×', accent: true },
+      ],
+      saving: '3×',
+      savingLabel: 'average ROI in year one',
+    },
   },
 ];
 
@@ -172,4 +226,6 @@ export const BPO_STATS = [
   { n: '10K+',  l: 'Concurrent AI Calls' },
   { n: '6 wks', l: 'Avg. Deployment Time' },
   { n: '3×',    l: 'Avg. Year-1 ROI' },
+  { n: '₹50/hr', l: 'vs ₹200/hr Human Agent' },
+  { n: '₹0',    l: 'Night Shift Premium' },
 ];

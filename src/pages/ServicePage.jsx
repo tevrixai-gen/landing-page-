@@ -202,6 +202,40 @@ export default function ServicePage({ onDemo }) {
         </div>
       </section>
 
+      {/* ── COST SAVING BANNER (only if svc.costSaving defined) ── */}
+      {svc.costSaving && (
+        <section className="py-10 px-6">
+          <div className="max-w-5xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              className="card-3d p-8 bg-gradient-to-br from-emerald-50/60 to-white border-emerald-200/60"
+            >
+              <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-10">
+                <div className="flex-1">
+                  <div className="text-[11px] font-bold text-emerald-700 uppercase tracking-widest mb-4">The Economics</div>
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    {svc.costSaving.items.map((item) => (
+                      <div key={item.label} className="flex-1 min-w-0">
+                        <div className="text-[11px] text-slate-400 font-medium mb-1 leading-snug">{item.label}</div>
+                        <div className={`text-xl font-bold ${item.strike ? 'text-slate-400 line-through' : item.highlight ? 'text-emerald-600' : 'text-amber-500'}`}>
+                          {item.value}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex-shrink-0 text-center">
+                  <div className="inline-flex flex-col items-center px-8 py-5 rounded-2xl bg-emerald-500 text-white">
+                    <div className="text-4xl font-bold leading-none mb-1">{svc.costSaving.saving}</div>
+                    <div className="text-[11px] font-semibold uppercase tracking-wide opacity-90 max-w-[120px] text-center leading-tight">{svc.costSaving.savingLabel}</div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      )}
+
       {/* ── FEATURES GRID (only if svc.features defined) ── */}
       {svc.features && (
         <section className="py-20 px-6 relative overflow-hidden">
