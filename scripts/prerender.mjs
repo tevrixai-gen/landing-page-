@@ -155,4 +155,22 @@ for (const route of routes) {
   }
 }
 
+/* ── Auto-generate sitemap.xml with today's date ──────────── */
+const ROUTE_PRIORITY = {
+  '/': '1.0', '/about': '0.9', '/ai-bpo': '0.8',
+  '/privacy': '0.4', '/terms': '0.4',
+};
+const today = new Date().toISOString().slice(0, 10);
+const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${routes.map(r => `  <url>
+    <loc>https://tevrixai.com${r === '/' ? '/' : r}</loc>
+    <lastmod>${today}</lastmod>
+    <priority>${ROUTE_PRIORITY[r] || '0.7'}</priority>
+  </url>`).join('\n')}
+</urlset>
+`;
+writeFileSync(resolve(distDir, 'sitemap.xml'), sitemapXml);
+console.log(`  ✓ sitemap.xml  (${routes.length} URLs, lastmod ${today})`);
+
 console.log('\nPre-render complete.');

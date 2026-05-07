@@ -53,6 +53,12 @@
     <!-- Technical SEO -->
     <link rel="canonical" href="https://tevrixai.com/" />
     <meta name="theme-color" content="#f59e0b" />
+
+    <!-- SSR visibility fix: framer-motion sets opacity:0 on hydration before
+         animations fire. This CSS override keeps content visible for crawlers
+         (and the initial paint). Removed by main.jsx after first user interaction. -->
+    <style id="fm-ssr">#root [style*="opacity: 0;"]{opacity:1!important}#root [style*="opacity:0;"]{opacity:1!important}</style>
+    <noscript><style>#root [style]{opacity:1!important;transform:none!important}</style></noscript>
   </head>
   <body>
     <div id="root"></div>
