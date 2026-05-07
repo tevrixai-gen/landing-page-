@@ -5,7 +5,8 @@ import App from './App.jsx'
 import './index.css'
 
 const removeFmOverride = () => {
-  document.getElementById('fm-ssr')?.remove();
+  // Delay removal so framer-motion has time to animate elements into view
+  setTimeout(() => document.getElementById('fm-ssr')?.remove(), 3000);
   document.removeEventListener('scroll', removeFmOverride);
   document.removeEventListener('click', removeFmOverride);
   document.removeEventListener('touchstart', removeFmOverride);
