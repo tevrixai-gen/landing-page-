@@ -591,6 +591,100 @@ const Manifesto = ({ onDemo }) => (
 );
 
 /* ============================================================
+   WHY TEVRIX WINS
+   ============================================================ */
+const WhyTevrixWins = () => (
+  <section className="relative py-20 md:py-28 px-6 overflow-hidden">
+    <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgba(245,158,11,0.05),transparent)] pointer-events-none" />
+    <div className="max-w-6xl mx-auto relative z-10">
+      <div className="text-center mb-16">
+        <motion.span
+          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+          className="label-badge mb-5 inline-flex"
+        >
+          <Zap className="w-3.5 h-3.5" /> Why Tevrix Wins
+        </motion.span>
+        <motion.h2
+          initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          className="text-5xl md:text-6xl text-slate-950 mb-5"
+        >
+          Built Different.<br /><span className="text-gradient-amber">By Design.</span>
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} viewport={{ once: true }}
+          className="text-lg text-slate-500 max-w-xl mx-auto"
+        >
+          The AI tools that exist today are point solutions. Tevrix is an operating system for your entire workforce.
+        </motion.p>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-6 mb-8">
+        {[
+          {
+            number: '01',
+            title: 'Multi-Agentic, Not a Chatbot',
+            desc: 'We don\'t run a single model. We run a coordinated system of AI agents — each specialised, each reasoning independently, all working together. One agent parses CVs. Another conducts interviews. Another scores and ranks. Together they produce outcomes no single AI can.',
+            color: 'amber',
+          },
+          {
+            number: '02',
+            title: 'End-to-End, Not a Point Tool',
+            desc: 'Most AI tools do one thing. They make you stitch together five products to run a single workflow. Tevrix covers the entire pipeline — from the first input to the final decision — in one subscription, with no integration headache.',
+            color: 'violet',
+          },
+          {
+            number: '03',
+            title: 'Latest Models. Always.',
+            desc: 'We build on the latest foundation models and upgrade automatically. You never get locked into last year\'s AI. When a better model ships, your agents improve — without re-training, re-integrating, or re-deploying anything.',
+            color: 'amber',
+          },
+          {
+            number: '04',
+            title: 'Subscription. No Enterprise Contracts.',
+            desc: 'No 6-month implementation. No six-figure license fee. No consultant required. Sign up, configure your workflow, and your AI agent is live. Monthly subscription — cancel anytime. This is how enterprise software should work.',
+            color: 'violet',
+          },
+        ].map((item, i) => (
+          <motion.div
+            key={item.number}
+            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }} viewport={{ once: true }}
+            className="card-3d p-8"
+          >
+            <div className="flex items-start gap-5">
+              <div
+                className="text-[11px] font-bold w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                style={{
+                  background: item.color === 'amber' ? 'rgba(245,158,11,0.1)' : 'rgba(124,58,237,0.1)',
+                  color: item.color === 'amber' ? '#D97706' : '#7C3AED',
+                  border: `1px solid ${item.color === 'amber' ? 'rgba(245,158,11,0.25)' : 'rgba(124,58,237,0.25)'}`,
+                }}
+              >
+                {item.number}
+              </div>
+              <div>
+                <h3 className="text-[17px] font-bold text-slate-900 mb-3">{item.title}</h3>
+                <p className="text-slate-500 text-[14px] leading-relaxed">{item.desc}</p>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+        className="card-3d card-bpo p-8 md:p-10 text-center"
+      >
+        <p className="text-xl md:text-2xl font-semibold text-slate-900 max-w-3xl mx-auto leading-relaxed">
+          "The reason AI hasn't replaced your operations yet is that every tool only solves one step.
+          <span className="text-gradient-amber"> Tevrix solves the whole thing."</span>
+        </p>
+      </motion.div>
+    </div>
+  </section>
+);
+
+/* ============================================================
    CONTACT (inline form, not modal)
    ============================================================ */
 const Contact = () => {
@@ -787,6 +881,7 @@ export default function Home({ onDemo }) {
       <SectorsSection />
       <IndiaSection />
       <Manifesto onDemo={onDemo} />
+      <WhyTevrixWins />
       <Contact />
       <Footer onDemo={onDemo} />
     </main>

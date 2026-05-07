@@ -133,6 +133,56 @@ export default function ServicePage({ onDemo }) {
         <div className="aurora-hero-bottom" />
       </section>
 
+      {/* ── PROBLEM STATEMENT (only if defined) ── */}
+      {svc.problemStatement && (
+        <section className="py-20 px-6 relative overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgba(239,68,68,0.04),transparent)] pointer-events-none" />
+          <div className="max-w-5xl mx-auto relative z-10">
+            <div className="text-center mb-14">
+              <span className="label-badge mb-5 inline-flex" style={{ background: 'rgba(239,68,68,0.07)', borderColor: 'rgba(239,68,68,0.2)', color: '#dc2626' }}>
+                The Problem
+              </span>
+              <motion.h2
+                initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                className="text-4xl md:text-5xl font-bold text-slate-950 mb-4"
+              >
+                {svc.problemStatement.headline}
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} viewport={{ once: true }}
+                className="text-lg text-slate-500 max-w-2xl mx-auto"
+              >
+                {svc.problemStatement.sub}
+              </motion.p>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-12">
+              {svc.problemStatement.stats.map((s, i) => (
+                <motion.div
+                  key={s.l}
+                  initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.08 }} viewport={{ once: true }}
+                  className="card-3d p-6 text-center"
+                >
+                  <div className="text-3xl font-bold text-red-500 tracking-tight mb-1">{s.n}</div>
+                  <div className="text-[13px] font-semibold text-slate-700 mb-2">{s.l}</div>
+                  <div className="text-[12px] text-slate-400 leading-snug">{s.detail}</div>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              className="card-3d p-8 text-center border-l-4 border-amber-400"
+            >
+              <p className="text-lg text-slate-600 leading-relaxed max-w-3xl mx-auto">
+                {svc.problemStatement.insight}
+              </p>
+            </motion.div>
+          </div>
+        </section>
+      )}
+
       {/* ── HEADLINE STATS ── */}
       <section className="py-12 px-6">
         <div className="max-w-4xl mx-auto">

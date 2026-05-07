@@ -9,7 +9,7 @@ const TEAM = [
     init: 'PS',
     color: 'bg-amber-100 text-amber-700',
     linkedin: 'https://www.linkedin.com/in/panshulsharma777/',
-    bio: "Conceived Tevrix AI after identifying that India's $38B BPO industry was ready for an AI-native disruption. Building the platform that replaces repetitive outsourced work with intelligent agents that operate 24/7 across 120+ languages.",
+    bio: "Conceived Tevrix AI with a dual vision: AI that faces your customers 24/7 across every channel, and AI that works inside your company as a permanent employee across every department. Driving product strategy, go-to-market, and the first launch — AI HR, shipping next month.",
   },
   {
     name: 'Vempalli Madhu Sai',
@@ -17,7 +17,7 @@ const TEAM = [
     init: 'MS',
     color: 'bg-violet-100 text-violet-700',
     linkedin: 'https://www.linkedin.com/in/madhu-sai-vempalli-72205a3b9/',
-    bio: "Joined as Co-Founder & CTO in January 2026 to lead product and technology. Focused on building the AI infrastructure, technical architecture, and engineering systems that will scale Tevrix AI from MVP to global enterprise deployments.",
+    bio: "Building the multi-agentic AI infrastructure that powers Tevrix — coordinated AI agents that reason across full workflows rather than answering single questions. Architecting the systems for AI HR, AI Customer Care, and every agent that follows.",
   },
 ];
 
@@ -35,15 +35,15 @@ const TIMELINE = [
     color: 'violet',
   },
   {
-    date: 'April 2026',
-    title: 'Building MVP',
-    desc: 'Actively developing the core AI modules — Customer Care, HR Automation, and Financial Intelligence. Accepting early access enterprise partners to shape the product.',
+    date: 'May 2026',
+    title: 'AI HR — Final Build',
+    desc: 'Completing the full AI HR pipeline: CV parsing at scale, proctored coding challenges, AI video interviews with transcript scoring, and the recruiter AI chatbot. Open signup launching next month.',
     color: 'amber',
   },
   {
-    date: 'Coming Soon',
-    title: 'First Deployments',
-    desc: "Our first enterprise pilots. We're currently speaking with businesses who want to be first movers in AI-native BPO — reach out to join.",
+    date: 'June 2026',
+    title: 'AI HR Launch — Open Signup',
+    desc: "Our first product ships globally. Any company that hires can sign up and deploy AI HR immediately — subscription-based, no implementation required. AI Customer Care and AI Financial Analyst follow.",
     color: 'violet',
   },
 ];
@@ -69,16 +69,16 @@ export default function AboutPage({ onDemo }) {
             transition={{ delay: 0.1, duration: 1, ease: [0.16, 1, 0.3, 1] }}
             className="text-5xl md:text-7xl font-bold leading-[0.92] tracking-tighter text-slate-950 mb-8"
           >
-            Built by Builders.<br />
-            <span className="text-gradient-amber">For Enterprises.</span>
+            Two Founders.<br />
+            <span className="text-gradient-amber">One Big Vision.</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.22 }}
             className="text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed"
           >
-            Tevrix AI is a two-person founding team based in India, building the platform that replaces
-            repetitive business processes with intelligent AI agents — starting with India's $38B BPO market.
+            We're building two things: AI that faces your customers 24/7, and AI that works inside
+            your company as a permanent employee. Both visions. One platform. Starting with AI HR — launching next month.
           </motion.p>
         </div>
         <div className="aurora-hero-bottom" />
@@ -118,8 +118,8 @@ export default function AboutPage({ onDemo }) {
             <span className="label-badge mb-5 inline-flex"><Users className="w-3.5 h-3.5" /> Founding Team</span>
             <h2 className="text-4xl md:text-5xl text-slate-950 mb-4">The People Building It.</h2>
             <p className="text-slate-500 max-w-lg mx-auto">
-              Two founders. One mission — replace repetitive human labor in BPO with AI that works
-              better, faster, and at a fraction of the cost.
+              Two founders. Two visions — AI that serves your customers, and AI that works as your employees.
+              One subscription. Launching globally, starting with AI HR.
             </p>
           </div>
 

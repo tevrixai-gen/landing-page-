@@ -30,6 +30,17 @@ export const SERVICES = [
     launchBadge: 'Launching Next Month · Open Signup',
     ctaLabel: 'Get Early Access',
     short: 'From job description to top 5 shortlisted candidates — AI that parses 1000s of CVs, runs proctored assessments, conducts AI interviews, and ranks candidates with scores and reasoning.',
+    problemStatement: {
+      headline: 'Hiring is Broken.',
+      sub: 'Every company that hires is losing time, money, and the best candidates to a process designed for the 1990s.',
+      stats: [
+        { n: '250+', l: 'CVs per job post on average', detail: 'Most are never read by a human recruiter' },
+        { n: '42 days', l: 'Average time-to-hire', detail: 'Your best candidates accept elsewhere in week two' },
+        { n: '70%', l: 'Recruiter time wasted', detail: 'Spent screening, scheduling, and taking notes — not hiring' },
+        { n: '₹1L+', l: 'Average cost-per-hire in India', detail: 'Before onboarding costs, missed productivity, and bad hires' },
+      ],
+      insight: 'The problem isn\'t finding talent. It\'s that recruiters spend most of their day on tasks that have nothing to do with judgement. Tevrix AI takes everything that can be automated — and automates it completely.',
+    },
     hero: 'Your AI Hiring Team. Always On.',
     heroSub: 'Tevrix AI runs the entire hiring pipeline autonomously — so your team only spends time with the best 5 candidates.',
     color: 'violet',
