@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Zap, X } from 'lucide-react';
 import Home        from './pages/Home';
-import AIBPOPage   from './pages/AIBPOPage';
-import ServicePage from './pages/ServicePage';
-import AboutPage   from './pages/AboutPage';
-import PrivacyPage from './pages/PrivacyPage';
-import TermsPage   from './pages/TermsPage';
+const AIBPOPage   = lazy(() => import('./pages/AIBPOPage'));
+const ServicePage = lazy(() => import('./pages/ServicePage'));
+const AboutPage   = lazy(() => import('./pages/AboutPage'));
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
+const TermsPage   = lazy(() => import('./pages/TermsPage'));
 import Navbar      from './Navbar';
 
 const DemoModal = ({ isOpen, onClose }) => {
@@ -152,11 +152,11 @@ export default function AppRoutes() {
       <Navbar onDemo={openDemo} />
       <Routes>
         <Route path="/"            element={<Home        onDemo={openDemo} />} />
-        <Route path="/ai-bpo"      element={<AIBPOPage   onDemo={openDemo} />} />
-        <Route path="/service/:id" element={<ServicePage onDemo={openDemo} />} />
-        <Route path="/about"       element={<AboutPage   onDemo={openDemo} />} />
-        <Route path="/privacy"     element={<PrivacyPage />} />
-        <Route path="/terms"       element={<TermsPage />} />
+        <Route path="/ai-bpo"      element={<Suspense fallback={<div className="min-h-screen" />}><AIBPOPage   onDemo={openDemo} /></Suspense>} />
+        <Route path="/service/:id" element={<Suspense fallback={<div className="min-h-screen" />}><ServicePage onDemo={openDemo} /></Suspense>} />
+        <Route path="/about"       element={<Suspense fallback={<div className="min-h-screen" />}><AboutPage   onDemo={openDemo} /></Suspense>} />
+        <Route path="/privacy"     element={<Suspense fallback={<div className="min-h-screen" />}><PrivacyPage /></Suspense>} />
+        <Route path="/terms"       element={<Suspense fallback={<div className="min-h-screen" />}><TermsPage /></Suspense>} />
       </Routes>
     </div>
   );

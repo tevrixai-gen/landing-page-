@@ -54,14 +54,16 @@
     <link rel="canonical" href="https://tevrixai.com/" />
     <meta name="theme-color" content="#f59e0b" />
 
-    <!-- SSR visibility fix: framer-motion hides elements via WAAPI and inline
-         styles before animations fire. This nuclear override forces everything
-         visible for crawlers + initial paint. Removed by main.jsx on first
-         user interaction so animations work normally afterwards. -->
+    <!-- SSR visibility fix: targets only elements framer-motion touches (those
+         with inline style attrs). Avoids the #root * wildcard which caused
+         massive style recalculation (5s+). Removed by main.jsx on interaction. -->
     <style id="fm-ssr">
-      #root *{opacity:1!important;transform:none!important;visibility:visible!important}
+      #root [style*="opacity"]{opacity:1!important}
+      #root [style*="transform"]{transform:none!important}
+      #root [style*="visibility"]{visibility:visible!important}
+      #root section,#root [data-framer-name]{opacity:1!important;transform:none!important}
     </style>
-    <noscript><style>#root *{opacity:1!important;transform:none!important;visibility:visible!important}</style></noscript>
+    <noscript><style>#root section,#root div,#root p,#root h1,#root h2,#root h3,#root span{opacity:1!important;transform:none!important}</style></noscript>
   </head>
   <body>
     <div id="root"></div>

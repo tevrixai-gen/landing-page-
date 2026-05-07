@@ -1,9 +1,18 @@
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, ArrowLeft, CheckCircle, Zap, ChevronRight, Globe, Sparkles } from 'lucide-react';
-import * as LucideIcons from 'lucide-react';
+import {
+  ArrowRight, ArrowLeft, CheckCircle, Zap, ChevronRight, Globe, Sparkles,
+  Headphones, Users, BarChart3, FileText, Phone, Layers,
+  ScanSearch, Code2, Video, FileSearch, Trophy, MessageSquare
+} from 'lucide-react';
 import { SERVICES } from '../data';
+
+/* Icon map — replaces `import * as LucideIcons` which pulled ALL 1400 icons */
+const ICON_MAP = {
+  Headphones, Users, BarChart3, FileText, Phone, Layers,
+  ScanSearch, Code2, Video, FileSearch, Trophy, MessageSquare, Zap,
+};
 
 /* ── Process Flow Visualization ── */
 const ProcessFlow = ({ steps }) => (
@@ -57,7 +66,7 @@ export default function ServicePage({ onDemo }) {
     );
   }
 
-  const Icon = LucideIcons[svc.icon] || LucideIcons.Zap;
+  const Icon = ICON_MAP[svc.icon] || Zap;
   const isViolet = svc.color === 'violet';
   const accentColor = isViolet ? '#7C3AED' : '#F59E0B';
   const accentClass = isViolet ? 'text-violet-600' : 'text-amber-600';
@@ -251,7 +260,7 @@ export default function ServicePage({ onDemo }) {
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
               {svc.features.map((f, i) => {
-                const FIcon = LucideIcons[f.icon] || LucideIcons.Zap;
+                const FIcon = ICON_MAP[f.icon] || Zap;
                 return (
                   <motion.div
                     key={f.title}
@@ -381,7 +390,7 @@ export default function ServicePage({ onDemo }) {
           <h3 className="text-2xl font-bold text-slate-900 mb-10 text-center">Explore Other Modules</h3>
           <div className="grid md:grid-cols-3 gap-5">
             {otherServices.map((s, i) => {
-              const OtherIcon = LucideIcons[s.icon] || LucideIcons.Zap;
+              const OtherIcon = ICON_MAP[s.icon] || Zap;
               return (
                 <motion.div
                   key={s.id}

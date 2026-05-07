@@ -55,6 +55,12 @@
     overflow-x: hidden;
   }
 
+  /* Defer layout work for below-fold sections — huge perf win */
+  #root > main > section:nth-child(n+3) {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 800px;
+  }
+
   h1, h2, h3, h4 {
     font-family: var(--font-display);
     font-weight: 700;
