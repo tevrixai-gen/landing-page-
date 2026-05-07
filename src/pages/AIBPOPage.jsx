@@ -201,10 +201,10 @@ const WhatIsBPO = () => (
           </p>
           <div className="space-y-3">
             {[
-              '73% of BPO tasks in India are fully automatable with current AI',
-              '85% cost reduction vs. traditional offshore BPO operations',
-              '140× throughput — AI processes in milliseconds, not minutes',
-              'Built in Bharat — Engineered for global enterprise scale',
+              '73% of BPO tasks are fully automatable with current AI models',
+              'Up to 85% cost reduction vs. traditional offshore BPO operations',
+              'AI responds in under a second — humans take minutes',
+              'Built in Bharat — engineered for global enterprise scale',
             ].map(p => (
               <div key={p} className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
@@ -222,11 +222,11 @@ const WhatIsBPO = () => (
         >
           <div className="text-[11px] font-bold text-amber-600 uppercase tracking-widest mb-8">Market Disruption</div>
           {[
-            { label: 'Global BPO Market',         value: '$280B', color: 'text-amber-500' },
-            { label: 'AI Addressable Share',       value: '73%',   color: 'text-violet-500' },
-            { label: 'Cost vs. Offshore',          value: '-85%',  color: 'text-emerald-500' },
-            { label: 'Speed Multiplier',            value: '140×',  color: 'text-amber-500' },
-            { label: 'First-Contact Resolution',   value: '90%',   color: 'text-violet-500' },
+            { label: 'Global BPO Market',          value: '$280B',  color: 'text-amber-500' },
+            { label: 'AI Automatable BPO Tasks',   value: '73%',    color: 'text-violet-500' },
+            { label: 'Cost Reduction (Target)',     value: 'Up to 85%', color: 'text-emerald-500' },
+            { label: 'AI Response Time',            value: '< 1s',  color: 'text-amber-500' },
+            { label: 'Languages Supported',         value: '120+',  color: 'text-violet-500' },
           ].map(r => (
             <div key={r.label} className="flex justify-between items-center py-3 border-b border-black/[0.05] last:border-0">
               <span className="text-slate-500 text-[14px]">{r.label}</span>

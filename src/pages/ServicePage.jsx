@@ -188,10 +188,7 @@ export default function ServicePage({ onDemo }) {
         <div className="max-w-4xl mx-auto">
           <div className="gradient-divider mb-12" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-            {[svc.stat1, svc.stat2,
-              { n: '24/7', l: 'Always Available' },
-              { n: '120+', l: 'Languages Supported' }
-            ].map(s => (
+            {[svc.stat1, svc.stat2, svc.stat3, svc.stat4].filter(Boolean).map(s => (
               <div key={s.l} className="stat-card text-center">
                 <div className="text-3xl font-bold text-slate-950 tracking-tight mb-1">{s.n}</div>
                 <div className="text-[13px] text-slate-500">{s.l}</div>
