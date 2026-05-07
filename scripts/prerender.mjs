@@ -100,16 +100,28 @@ const PAGE_META = {
 };
 
 function stripAnimationHiding(html) {
-  // Framer-motion bakes opacity:0 / transform into SSR output.
-  // Google's renderer sees blank content. Strip those initial-state styles
-  // so all content is visible in the static HTML.
+  // Framer-motion bakes opacity:0, transform, and will-change into SSR output.
+  // Google's WRS sees blank content because these initial-state styles hide elements.
+  //
+  // Strategy: Remove ANY inline style that contains opacity:0 or animation-related
+  // transforms. Keep purely decorative styles (gradients, colors, etc.) intact.
+
   return html
-    .replace(/style="opacity:\s*0[^"]*"/g, '')
-    .replace(/style="([^"]*?)opacity:\s*0;?\s*/g, 'style="$1')
-    .replace(/style="([^"]*?)transform:\s*translateY\([^)]+\);?\s*/g, 'style="$1')
-    .replace(/style="([^"]*?)transform:\s*translateX\([^)]+\);?\s*/g, 'style="$1')
-    .replace(/style="([^"]*?)transform:\s*scale\([^)]+\);?\s*/g, 'style="$1')
-    .replace(/style=""\s*/g, '');
+    // 1. Remove entire style attr if it contains opacity near zero (0, 0.0, etc.)
+    .replace(/\s*style="[^"]*opacity\s*:\s*0(?:\.0+)?(?:\s*;[^"]*)?"/gi, '')
+
+    // 2. Strip opacity:0 from within multi-property style attrs
+    .replace(/opacity\s*:\s*0(?:\.0+)?\s*;?\s*/gi, '')
+
+    // 3. Strip framer-motion transforms (translateX/Y/Z, scale, rotate)
+    .replace(/transform\s*:\s*(?:translateY|translateX|translate3d|scale|scale3d|rotate)\([^)]*\)\s*;?\s*/gi, '')
+
+    // 4. Strip will-change (not needed for static HTML)
+    .replace(/will-change\s*:\s*[^;"]+(;|\s*(?="))/gi, '')
+
+    // 5. Clean up empty or whitespace-only style attrs left behind
+    .replace(/\s*style="\s*"/g, '')
+    .replace(/\s*style="\s*;\s*"/g, '');
 }
 
 function injectMeta(html, meta) {

@@ -57,7 +57,11 @@
     <!-- SSR visibility fix: framer-motion sets opacity:0 on hydration before
          animations fire. This CSS override keeps content visible for crawlers
          (and the initial paint). Removed by main.jsx after first user interaction. -->
-    <style id="fm-ssr">#root [style*="opacity: 0"]{opacity:1!important;transform:none!important}#root [style*="opacity:0"]{opacity:1!important;transform:none!important}</style>
+    <style id="fm-ssr">
+      #root [style*="opacity"]{opacity:1!important}
+      #root [style*="transform"]{transform:none!important}
+      #root [style*="will-change"]{will-change:auto!important}
+    </style>
     <noscript><style>#root [style]{opacity:1!important;transform:none!important}</style></noscript>
   </head>
   <body>
