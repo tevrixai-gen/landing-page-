@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Zap, X } from 'lucide-react';
 import Home        from './pages/Home';
@@ -134,6 +134,12 @@ const DemoModal = ({ isOpen, onClose }) => {
   );
 };
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
+
 export default function AppRoutes() {
   const [demoOpen, setDemoOpen] = useState(false);
   const openDemo  = () => setDemoOpen(true);
@@ -141,6 +147,7 @@ export default function AppRoutes() {
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] text-slate-600 font-sans selection:bg-amber-200 selection:text-amber-900">
+      <ScrollToTop />
       <DemoModal isOpen={demoOpen} onClose={closeDemo} />
       <Navbar onDemo={openDemo} />
       <Routes>
