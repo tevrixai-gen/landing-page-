@@ -114,11 +114,10 @@
 
   /* ── Mesh Background ── */
   .warm-mesh-bg {
-    position: fixed;
+    position: absolute;
     inset: 0;
     pointer-events: none;
-    z-index: -10;
-    background-color: #FAFAFA;
+    z-index: 0;
     background-image:
       radial-gradient(ellipse 90% 60% at   5%   5%,  rgba(245, 158, 11, 0.22) 0%, transparent 65%),
       radial-gradient(ellipse 80% 50% at  95%   8%,  rgba(124, 58, 237, 0.18) 0%, transparent 60%),
@@ -140,11 +139,11 @@
 
   /* Animated drift blobs */
   .mesh-blob {
-    position: fixed;
+    position: absolute;
     pointer-events: none;
     border-radius: 50%;
     filter: blur(90px);
-    z-index: -9;
+    z-index: 1;
     animation: blob-drift 28s ease-in-out infinite;
     will-change: transform, opacity;
     transform: translateZ(0);
@@ -192,9 +191,9 @@
 
   /* Fine dot grid overlay */
   .dot-grid {
-    position: fixed;
+    position: absolute;
     inset: 0;
-    z-index: -8;
+    z-index: 2;
     pointer-events: none;
     background-image: radial-gradient(circle, rgba(0,0,0,0.06) 1px, transparent 1px);
     background-size: 28px 28px;
