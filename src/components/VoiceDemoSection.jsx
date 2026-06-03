@@ -79,7 +79,7 @@ const COLOR_MAP = {
 const CALL_LIMIT = 60; // 1-minute cap
 
 /* ── Widget loader ───────────────────────────────────────── */
-function loadDograhScript(token, onReady) {
+function loadDograhScript(token, onReady, onFail) {
   // Remove previous script + any widget DOM nodes Dograh injected
   const prev = document.getElementById('dograh-widget');
   if (prev) prev.remove();
@@ -98,18 +98,25 @@ function loadDograhScript(token, onReady) {
   const script = document.createElement('script');
   script.id = 'dograh-widget';
   script.async = true;
-  script.src = `https://app.dograh.com/embed/dograh-widget.js?token=${token}`;
+  script.src =
+    `https://app.dograh.com/embed/dograh-widget.js` +
+    `?token=${token}&environment=production&apiEndpoint=https://api.dograh.com`;
+
+  // Handle script load failure
+  script.onerror = () => { if (onFail) onFail(); };
   document.head.appendChild(script);
 
-  // Poll until window.DograhWidget is available
+  // Poll until window.DograhWidget is available (max ~12s)
   let attempts = 0;
+  const maxAttempts = 80;
   const poll = setInterval(() => {
     attempts++;
     if (window.DograhWidget) {
       clearInterval(poll);
       onReady(window.DograhWidget);
-    } else if (attempts > 100) {
+    } else if (attempts > maxAttempts) {
       clearInterval(poll);
+      if (onFail) onFail();
     }
   }, 150);
 
@@ -137,48 +144,55 @@ export default function VoiceDemoSection() {
     setTimeLeft(CALL_LIMIT);
 
     const ind = INDUSTRIES.find(i => i.id === id);
-    const cancel = loadDograhScript(ind.token, (widget) => {
-      setStatus('ready');
+    const cancel = loadDograhScript(
+      ind.token,
+      (widget) => {
+        setStatus('ready');
 
-      widget.onStatusChange((s) => {
-        if (s === 'connecting') setStatus('connecting');
-        else if (s === 'connected') setStatus('connected');
-        else if (s === 'idle') {
+        widget.onStatusChange?.((s) => {
+          if (s === 'connecting') setStatus('connecting');
+          else if (s === 'connected') setStatus('connected');
+          else if (s === 'idle') {
+            clearInterval(timerRef.current);
+            setStatus('ready');
+            setTimeLeft(CALL_LIMIT);
+          } else if (s === 'failed') {
+            clearInterval(timerRef.current);
+            setStatus('failed');
+          }
+        });
+
+        widget.onCallConnected?.(() => {
+          setTimeLeft(CALL_LIMIT);
+          timerRef.current = setInterval(() => {
+            setTimeLeft(prev => {
+              if (prev <= 1) {
+                clearInterval(timerRef.current);
+                try { window.DograhWidget?.end(); } catch {}
+                setStatus('ended');
+                return 0;
+              }
+              return prev - 1;
+            });
+          }, 1000);
+        });
+
+        widget.onCallDisconnected?.(() => {
           clearInterval(timerRef.current);
           setStatus('ready');
           setTimeLeft(CALL_LIMIT);
-        } else if (s === 'failed') {
+        });
+
+        widget.onError?.(() => {
           clearInterval(timerRef.current);
           setStatus('failed');
-        }
-      });
-
-      widget.onCallConnected(() => {
-        setTimeLeft(CALL_LIMIT);
-        timerRef.current = setInterval(() => {
-          setTimeLeft(prev => {
-            if (prev <= 1) {
-              clearInterval(timerRef.current);
-              try { window.DograhWidget?.end(); } catch {}
-              setStatus('ended');
-              return 0;
-            }
-            return prev - 1;
-          });
-        }, 1000);
-      });
-
-      widget.onCallDisconnected(() => {
-        clearInterval(timerRef.current);
-        setStatus('ready');
-        setTimeLeft(CALL_LIMIT);
-      });
-
-      widget.onError(() => {
-        clearInterval(timerRef.current);
+        });
+      },
+      () => {
+        // onFail — widget script failed to load or timed out
         setStatus('failed');
-      });
-    });
+      }
+    );
 
     cleanupFn.current = cancel;
   }, []);
@@ -204,11 +218,16 @@ export default function VoiceDemoSection() {
     document.head.appendChild(style);
   }, []);
 
-  const handleTalk = () => {
+  const handleTalk = async () => {
     if (status === 'connected' || status === 'connecting') {
       try { window.DograhWidget?.end(); } catch {}
     } else if (status === 'ready') {
-      try { window.DograhWidget?.start(); } catch {}
+      try {
+        setStatus('connecting');
+        await window.DograhWidget?.start();
+      } catch {
+        setStatus('failed');
+      }
     } else if (status === 'ended' || status === 'failed') {
       initWidget(activeId);
     }
