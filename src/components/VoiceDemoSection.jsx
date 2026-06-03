@@ -78,6 +78,25 @@ const COLOR_MAP = {
 
 const CALL_LIMIT = 60; // 1-minute cap
 
+/* ── WebSocket proxy bypass ──────────────────────────────── */
+// Vercel can't proxy WebSocket. Redirect wss:// calls directly to
+// api.dograh.com — WebSocket is NOT subject to browser CORS enforcement.
+if (!window._dograhWsPatched) {
+  const _WS = window.WebSocket;
+  window.WebSocket = function (url, protocols) {
+    if (typeof url === 'string' && url.includes('tevrixai.com/dograh-api')) {
+      url = url.replace('wss://tevrixai.com/dograh-api', 'wss://api.dograh.com');
+    }
+    return protocols !== undefined ? new _WS(url, protocols) : new _WS(url);
+  };
+  window.WebSocket.prototype = _WS.prototype;
+  window.WebSocket.CONNECTING = _WS.CONNECTING;
+  window.WebSocket.OPEN = _WS.OPEN;
+  window.WebSocket.CLOSING = _WS.CLOSING;
+  window.WebSocket.CLOSED = _WS.CLOSED;
+  window._dograhWsPatched = true;
+}
+
 /* ── Widget loader ───────────────────────────────────────── */
 function loadDograhScript(token, onReady, onFail) {
   // Remove previous script + any widget DOM nodes Dograh injected
