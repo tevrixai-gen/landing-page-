@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { BPO_STATS } from '../data';
 import { ServiceCards, SectorCards } from '../Cards';
-import heroAbstract from '../assets/hero_abstract.png';
+import heroAbstract from '../assets/tevrix_unique_core_1775459546265.png';
 const logo = '/logo.png';
 
 /* ============================================================
