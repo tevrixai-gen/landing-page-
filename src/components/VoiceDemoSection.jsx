@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Landmark, ShoppingCart, Wifi, Stethoscope,
-  Mic, MicOff, PhoneOff, Clock, MessageSquare, Zap, Volume2, User
+  Mic, MicOff, PhoneOff, Clock, MessageSquare, Zap, Volume2
 } from 'lucide-react';
 
 /* ── Industry config ─────────────────────────────────────── */
@@ -131,21 +131,14 @@ const SVG_COLORS = {
   rose:    { c1: '#f43f5e', c2: '#ec4899', glow: 'rgba(244,63,94,0.3)' },
 };
 
-const USER_COLORS = { c1: '#3b82f6', c2: '#6366f1', glow: 'rgba(59,130,246,0.3)' };
-
 const CALL_LIMIT = 60;
 
 /* ── Visualizer constants ────────────────────────────────── */
+const AUDIO_BINS = 32;
 const VIS = 200;
 const CTR = VIS / 2;
-const INNER_R = 24;
-const BAR_START = 32;
-const BAR_COUNT = 28;
-const MAX_BAR_LEN = 32;
+const INNER_R = 28;
 const BLOB_POINTS = 8;
-const ANGLES = Array.from({ length: BAR_COUNT }, (_, i) =>
-  (i / BAR_COUNT) * Math.PI * 2 - Math.PI / 2
-);
 
 /* ── Smooth blob path generator ──────────────────────────── */
 function blobPath(cx, cy, baseR, offsets, n) {
@@ -175,8 +168,8 @@ function blobPath(cx, cy, baseR, offsets, n) {
 /* ── Audio capture hook ──────────────────────────────────── */
 function useAudioCapture() {
   const analyzerRef = useRef(null);
-  const levelsRef = useRef(new Float32Array(BAR_COUNT).fill(0));
-  const smoothedRef = useRef(new Float32Array(BAR_COUNT).fill(0));
+  const levelsRef = useRef(new Float32Array(AUDIO_BINS).fill(0));
+  const smoothedRef = useRef(new Float32Array(AUDIO_BINS).fill(0));
   const streamRef = useRef(null);
   const ctxRef = useRef(null);
   const speakerRef = useRef('idle');
@@ -230,7 +223,7 @@ function useAudioCapture() {
     if (!analyzerRef.current) {
       // No mic — generate fake voice data for demo feel
       const t = Date.now() / 1000;
-      for (let i = 0; i < BAR_COUNT; i++) {
+      for (let i = 0; i < AUDIO_BINS; i++) {
         const fake = (Math.sin(t * 3 + i * 0.8) + 1) / 2 * 0.4 + Math.random() * 0.15;
         smoothedRef.current[i] += (fake - smoothedRef.current[i]) * 0.15;
       }
@@ -240,7 +233,7 @@ function useAudioCapture() {
     const raw = new Uint8Array(analyzerRef.current.frequencyBinCount);
     analyzerRef.current.getByteFrequencyData(raw);
 
-    for (let i = 0; i < BAR_COUNT; i++) {
+    for (let i = 0; i < AUDIO_BINS; i++) {
       levelsRef.current[i] = (raw[i % raw.length] || 0) / 255;
       smoothedRef.current[i] += (levelsRef.current[i] - smoothedRef.current[i]) * 0.25;
     }
@@ -270,18 +263,19 @@ function useAudioCapture() {
 
 /* ── Conversation Visualizer ─────────────────────────────── */
 function ConversationVisualizer({ isConnected, colorKey, speaker, smoothedRef, tickAudio, timeLeft, agentName }) {
-  const barsRef = useRef([]);
   const blobRef = useRef(null);
   const glowRef = useRef(null);
   const rafRef = useRef(null);
-  const aiPhaseRef = useRef(0);
+  const phaseRef = useRef(0);
   const blobSmoothedRef = useRef(new Float32Array(BLOB_POINTS).fill(0));
 
   const sc = SVG_COLORS[colorKey];
   const progress = timeLeft / CALL_LIMIT;
-  const progressR = 94;
+  const progressR = 88;
   const circumference = 2 * Math.PI * progressR;
   const dashOffset = circumference - progress * circumference;
+
+  const isSpeaking = speaker === 'user' || speaker === 'ai';
 
   useEffect(() => {
     if (!isConnected) {
@@ -292,51 +286,33 @@ function ConversationVisualizer({ isConnected, colorKey, speaker, smoothedRef, t
     const animate = () => {
       tickAudio();
       const levels = smoothedRef.current;
-      const t = Date.now() / 1000;
-
-      // Update frequency bars (user speaking: full intensity, ai: gentle ambient)
       const isUser = speaker === 'user';
-      barsRef.current.forEach((el, i) => {
-        if (!el) return;
-        let level;
-        if (isUser) {
-          level = levels[i] || 0;
-        } else {
-          level = (Math.sin(t * 1.5 + i * 0.4) + 1) / 2 * 0.08;
-        }
-        const angle = ANGLES[i];
-        const endR = BAR_START + level * MAX_BAR_LEN;
-        el.setAttribute('x2', String(CTR + Math.cos(angle) * endR));
-        el.setAttribute('y2', String(CTR + Math.sin(angle) * endR));
-        el.setAttribute('opacity', String(isUser ? Math.min(0.85, 0.1 + level * 0.75) : 0.06));
-      });
-
-      // Update blob (AI speaking: organic morph, user: subtle)
       const isAI = speaker === 'ai';
-      aiPhaseRef.current += isAI ? 0.02 : 0.008;
-      const phase = aiPhaseRef.current;
+
+      phaseRef.current += isSpeaking ? 0.018 : 0.006;
+      const phase = phaseRef.current;
 
       for (let i = 0; i < BLOB_POINTS; i++) {
         let target;
-        if (isAI) {
-          target = Math.sin(phase + i * 1.2) * 10 + Math.sin(phase * 1.7 + i * 0.9) * 6 + 4;
-        } else if (isUser) {
+        if (isUser) {
           const avgLevel = (levels[i * 3] + (levels[i * 3 + 1] || 0) + (levels[i * 3 + 2] || 0)) / 3;
-          target = avgLevel * 18 + Math.sin(t * 2 + i) * 2;
+          target = avgLevel * 16 + Math.sin(phase * 2 + i * 0.9) * 3;
+        } else if (isAI) {
+          target = Math.sin(phase + i * 1.2) * 8 + Math.sin(phase * 1.6 + i * 0.8) * 5 + 3;
         } else {
-          target = Math.sin(phase + i * 0.8) * 3;
+          target = Math.sin(phase + i * 0.8) * 2;
         }
-        blobSmoothedRef.current[i] += (target - blobSmoothedRef.current[i]) * (isAI ? 0.06 : 0.12);
+        blobSmoothedRef.current[i] += (target - blobSmoothedRef.current[i]) * (isSpeaking ? 0.08 : 0.05);
       }
 
       if (blobRef.current) {
-        blobRef.current.setAttribute('d', blobPath(CTR, CTR, INNER_R + 2, blobSmoothedRef.current, BLOB_POINTS));
+        blobRef.current.setAttribute('d', blobPath(CTR, CTR, INNER_R, blobSmoothedRef.current, BLOB_POINTS));
       }
 
-      // Update glow
       if (glowRef.current) {
-        const glowScale = isUser ? 1.1 + (levels[0] || 0) * 0.4 : isAI ? 1.15 + Math.sin(phase) * 0.15 : 1;
-        const glowOpacity = isUser ? 0.2 + (levels[0] || 0) * 0.3 : isAI ? 0.25 + Math.sin(phase) * 0.1 : 0.05;
+        const avgLevel = isUser ? (levels[0] + levels[1] + levels[2]) / 3 : 0;
+        const glowScale = isSpeaking ? 1.2 + (isUser ? avgLevel * 0.3 : Math.sin(phase) * 0.12) : 1;
+        const glowOpacity = isSpeaking ? 0.25 + (isUser ? avgLevel * 0.2 : Math.sin(phase) * 0.08) : 0.05;
         glowRef.current.setAttribute('transform', `translate(${CTR}, ${CTR}) scale(${glowScale})`);
         glowRef.current.setAttribute('opacity', String(glowOpacity));
       }
@@ -344,38 +320,24 @@ function ConversationVisualizer({ isConnected, colorKey, speaker, smoothedRef, t
       rafRef.current = requestAnimationFrame(animate);
     };
     rafRef.current = requestAnimationFrame(animate);
-
     return () => cancelAnimationFrame(rafRef.current);
-  }, [isConnected, speaker, smoothedRef, tickAudio]);
-
-  const isUser = speaker === 'user';
-  const isAI = speaker === 'ai';
-  const barColor = isUser ? USER_COLORS.c1 : sc.c1;
-  const blobFillId = isUser ? 'userBlobGrad' : `aiBlobGrad-${colorKey}`;
+  }, [isConnected, speaker, smoothedRef, tickAudio, isSpeaking]);
 
   return (
-    <div className="flex flex-col items-center gap-3">
+    <div className="flex flex-col items-center gap-4">
       <div className="relative w-[200px] h-[200px]">
         <svg viewBox={`0 0 ${VIS} ${VIS}`} className="w-full h-full" style={{ overflow: 'visible' }}>
           <defs>
-            {/* AI blob gradient */}
-            <linearGradient id={`aiBlobGrad-${colorKey}`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <linearGradient id={`blobGrad-${colorKey}`} x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor={sc.c1} />
               <stop offset="100%" stopColor={sc.c2} />
             </linearGradient>
-            {/* User blob gradient */}
-            <linearGradient id="userBlobGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor={USER_COLORS.c1} />
-              <stop offset="100%" stopColor={USER_COLORS.c2} />
-            </linearGradient>
-            {/* Progress gradient */}
             <linearGradient id={`progGrad-${colorKey}`} x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor={sc.c1} />
               <stop offset="100%" stopColor={sc.c2} />
             </linearGradient>
-            {/* Glow filter */}
-            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="8" result="blur" />
+            <filter id="blobGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="6" result="blur" />
               <feMerge>
                 <feMergeNode in="blur" />
                 <feMergeNode in="SourceGraphic" />
@@ -383,13 +345,13 @@ function ConversationVisualizer({ isConnected, colorKey, speaker, smoothedRef, t
             </filter>
           </defs>
 
-          {/* Progress ring track */}
+          {/* Progress ring — subtle track */}
           <circle cx={CTR} cy={CTR} r={progressR}
-            fill="none" stroke="rgba(0,0,0,0.04)" strokeWidth="3"
+            fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth="2.5"
           />
-          {/* Progress ring fill */}
+          {/* Progress ring — filled arc */}
           <circle cx={CTR} cy={CTR} r={progressR}
-            fill="none" stroke={`url(#progGrad-${colorKey})`} strokeWidth="3"
+            fill="none" stroke={`url(#progGrad-${colorKey})`} strokeWidth="2.5"
             strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={dashOffset}
@@ -397,12 +359,12 @@ function ConversationVisualizer({ isConnected, colorKey, speaker, smoothedRef, t
             style={{ transition: 'stroke-dashoffset 0.5s ease' }}
           />
 
-          {/* AI ripple rings — only when AI speaks */}
-          {isAI && [0, 1, 2].map(i => (
+          {/* Ripple rings — show for BOTH user and AI speaking */}
+          {isSpeaking && [0, 1, 2].map(i => (
             <circle
               key={`ripple-${i}`}
               cx={CTR} cy={CTR}
-              r={INNER_R + 6}
+              r={INNER_R + 4}
               fill="none"
               stroke={sc.c1}
               strokeWidth="1.5"
@@ -410,61 +372,34 @@ function ConversationVisualizer({ isConnected, colorKey, speaker, smoothedRef, t
               style={{
                 transformOrigin: `${CTR}px ${CTR}px`,
                 transformBox: 'fill-box',
-                animation: `voice-ripple 2.8s ease-out ${i * 0.8}s infinite`,
+                animation: `voice-ripple 2.4s ease-out ${i * 0.6}s infinite`,
               }}
             />
           ))}
 
-          {/* Glow behind blob */}
+          {/* Soft glow behind blob */}
           <circle
             ref={glowRef}
-            cx={0} cy={0} r={INNER_R + 8}
-            fill={isUser ? USER_COLORS.glow : sc.glow}
+            cx={0} cy={0} r={INNER_R + 6}
+            fill={sc.glow}
             opacity="0.05"
             transform={`translate(${CTR}, ${CTR}) scale(1)`}
           />
 
-          {/* Frequency bars (radial) */}
-          {ANGLES.map((angle, i) => (
-            <line
-              key={i}
-              ref={el => { if (el) barsRef.current[i] = el; }}
-              x1={CTR + Math.cos(angle) * BAR_START}
-              y1={CTR + Math.sin(angle) * BAR_START}
-              x2={CTR + Math.cos(angle) * BAR_START}
-              y2={CTR + Math.sin(angle) * BAR_START}
-              stroke={barColor}
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              opacity="0"
-            />
-          ))}
-
-          {/* Center blob */}
+          {/* Center blob — always industry color */}
           <path
             ref={blobRef}
-            d={blobPath(CTR, CTR, INNER_R + 2, new Array(BLOB_POINTS).fill(0), BLOB_POINTS)}
-            fill={`url(#${blobFillId})`}
-            style={{ transition: 'fill 0.6s ease' }}
-            filter="url(#glow)"
+            d={blobPath(CTR, CTR, INNER_R, new Array(BLOB_POINTS).fill(0), BLOB_POINTS)}
+            fill={`url(#blobGrad-${colorKey})`}
+            filter="url(#blobGlow)"
           />
 
-          {/* Inner icon */}
-          {isUser ? (
-            <g transform={`translate(${CTR - 10}, ${CTR - 10})`} opacity="0.9">
-              <rect width="20" height="20" fill="none" />
-              <path d="M10 10 a3.5 3.5 0 1 0 0 -0.01 M10 14.5 c-4 0-6 2-6 3.5 v0.5 h12 v-0.5 c0-1.5-2-3.5-6-3.5"
-                fill="white" stroke="none" />
-            </g>
-          ) : (
-            <g transform={`translate(${CTR - 8}, ${CTR - 10})`} opacity="0.9">
-              <path d="M8 2 C8 0.9 8.9 0 10 0 h0 c1.1 0 2 0.9 2 2 v6 c0 1.1-0.9 2-2 2 h0 c-1.1 0-2-0.9-2-2 Z
-                       M5 7 c0 2.8 2.2 5 5 5 s5-2.2 5-5 M10 14 v4 M7 18 h6"
-                fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round"
-                transform="translate(-2, 1) scale(0.9)"
-              />
-            </g>
-          )}
+          {/* Mic icon inside blob */}
+          <g transform={`translate(${CTR}, ${CTR})`}>
+            <rect x="-2.5" y="-7" width="5" height="9" rx="2.5" fill="white" opacity="0.9" />
+            <path d="M-5 2 a5 5 0 0 0 10 0" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.9" />
+            <line x1="0" y1="7" x2="0" y2="10" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.9" />
+          </g>
         </svg>
       </div>
 
@@ -479,15 +414,13 @@ function ConversationVisualizer({ isConnected, colorKey, speaker, smoothedRef, t
           className="flex items-center gap-2"
         >
           <span className="relative flex h-2 w-2">
-            <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-60 ${
-              isUser ? 'bg-blue-400' : isAI ? 'bg-current' : 'bg-slate-300'
-            }`} style={isAI ? { color: sc.c1 } : {}} />
-            <span className={`relative inline-flex rounded-full h-2 w-2 ${
-              isUser ? 'bg-blue-500' : isAI ? '' : 'bg-slate-300'
-            }`} style={isAI ? { backgroundColor: sc.c1 } : {}} />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60"
+              style={{ backgroundColor: isSpeaking ? sc.c1 : '#cbd5e1' }} />
+            <span className="relative inline-flex rounded-full h-2 w-2"
+              style={{ backgroundColor: isSpeaking ? sc.c1 : '#cbd5e1' }} />
           </span>
           <span className="text-[13px] font-semibold text-slate-700">
-            {isUser ? 'You' : isAI ? agentName : 'Listening...'}
+            {speaker === 'user' ? 'You' : speaker === 'ai' ? agentName : 'Listening...'}
           </span>
         </motion.div>
       </AnimatePresence>
