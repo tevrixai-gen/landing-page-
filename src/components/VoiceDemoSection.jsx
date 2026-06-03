@@ -98,9 +98,7 @@ function loadDograhScript(token, onReady) {
   const script = document.createElement('script');
   script.id = 'dograh-widget';
   script.async = true;
-  script.src =
-    `https://app.dograh.com/embed/dograh-widget.js` +
-    `?token=${token}&environment=production&apiEndpoint=https://api.dograh.com`;
+  script.src = `https://app.dograh.com/embed/dograh-widget.js?token=${token}`;
   document.head.appendChild(script);
 
   // Poll until window.DograhWidget is available

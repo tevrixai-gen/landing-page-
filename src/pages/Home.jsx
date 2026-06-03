@@ -1059,12 +1059,12 @@ export default function Home({ onDemo }) {
   return (
     <main>
       <Hero onDemo={onDemo} />
+      <VoiceDemoSection />
       <StatsTicker />
       <WhatWeAreBuilding />
       <AIBPOTeaser />
       <ServicesSection />
       <SectorsSection />
-      <VoiceDemoSection />
       <IndiaSection />
       <Manifesto onDemo={onDemo} />
       <WhyTevrixWins />
