@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import VoiceDemoSection from '../components/VoiceDemoSection';
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import {
   Zap, Sparkles, ArrowRight, CheckCircle, TrendingUp,
   Cpu, Globe, Activity, Lock, Mail, ChevronRight,
-  Flag, Users, Mic, BarChart3, Bot, Headphones
+  Flag, Users, Mic, BarChart3, Bot, Headphones, ChevronDown
 } from 'lucide-react';
 import { BPO_STATS } from '../data';
 import { ServiceCards, SectorCards } from '../Cards';
+import heroAbstract from '../assets/hero_abstract.png';
 const logo = '/logo.png';
 
 /* ============================================================
@@ -116,8 +118,7 @@ const Hero = ({ onDemo }) => {
           transition={{ duration: 0.9, delay: 0.22 }}
           className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto mb-10 md:mb-12 leading-relaxed"
         >
-          We're building AI that handles every customer interaction — and AI that works as your
-          employees across every department. Starting with customer care, scaling to the entire enterprise.
+          Tevrix AI replaces offshore BPO with autonomous AI agents. They handle customer care, HR, and finance — 24/7, across 120+ languages, at 85% less cost.
         </motion.p>
 
         {/* CTAs */}
@@ -145,6 +146,23 @@ const Hero = ({ onDemo }) => {
               {t}
             </span>
           ))}
+        </motion.div>
+
+        {/* Hero visual */}
+        <motion.div
+          initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="mt-16 relative max-w-2xl mx-auto"
+        >
+          <img
+            src={heroAbstract}
+            alt="Tevrix AI autonomous agent platform — AI nodes coordinating enterprise BPO workflows"
+            className="w-full rounded-2xl shadow-2xl shadow-amber-500/10 border border-black/[0.06]"
+            loading="eager"
+            width="800"
+            height="500"
+          />
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-white/40 via-transparent to-transparent pointer-events-none" />
         </motion.div>
       </div>
 
@@ -718,6 +736,157 @@ const WhyTevrixWins = () => (
 );
 
 /* ============================================================
+   PILOT CTA — trial/pilot pathway (addresses pricing clarity gap)
+   ============================================================ */
+const PilotCTA = ({ onDemo }) => (
+  <section className="relative py-20 md:py-28 px-6 overflow-hidden">
+    <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,rgba(245,158,11,0.07),transparent)] pointer-events-none" />
+    <div className="max-w-4xl mx-auto relative z-10 text-center">
+      <motion.span
+        initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+        className="label-badge mb-6 inline-flex"
+      >
+        <Zap className="w-3.5 h-3.5" /> No Lock-In. No Risk.
+      </motion.span>
+      <motion.h2
+        initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+        className="text-4xl md:text-5xl text-slate-950 mb-6"
+      >
+        Start with a Pilot.<br />
+        <span className="text-gradient-amber">Pay Only When It Works.</span>
+      </motion.h2>
+      <motion.p
+        initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} viewport={{ once: true }}
+        className="text-lg text-slate-500 max-w-2xl mx-auto mb-10"
+      >
+        Most enterprise AI projects fail because they go too big, too fast. We do the opposite.
+        Pick one process. Run a 30-day pilot. Measure the results. Then decide.
+      </motion.p>
+
+      <motion.div
+        initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} viewport={{ once: true }}
+        className="grid md:grid-cols-3 gap-4 mb-10 text-left"
+      >
+        {[
+          { step: '01', title: 'Book a Demo', desc: 'Show us your current process. We map it in 30 minutes.' },
+          { step: '02', title: '30-Day Pilot', desc: 'We deploy one AI agent on your real workflow. Zero commitment.' },
+          { step: '03', title: 'Measure ROI', desc: 'You see the cost saving and output data. Then you decide to scale.' },
+        ].map(item => (
+          <div key={item.step} className="card-3d p-6">
+            <div className="text-[11px] font-bold text-amber-600 uppercase tracking-widest mb-3">{item.step}</div>
+            <h3 className="text-[16px] font-bold text-slate-900 mb-2">{item.title}</h3>
+            <p className="text-slate-500 text-[14px] leading-relaxed">{item.desc}</p>
+          </div>
+        ))}
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} viewport={{ once: true }}
+        className="flex flex-col sm:flex-row gap-4 justify-center"
+      >
+        <button onClick={onDemo} className="btn-primary text-[14px]">
+          Book Free Pilot Call <ArrowRight className="w-4 h-4" />
+        </button>
+        <Link to="/ai-bpo" className="btn-secondary text-[14px]">
+          See Pricing & Plans
+        </Link>
+      </motion.div>
+    </div>
+  </section>
+);
+
+/* ============================================================
+   FAQ — improves text-to-code ratio, readability, GEO citability
+   ============================================================ */
+const FAQ_ITEMS = [
+  {
+    q: 'What is Tevrix AI and how does it work?',
+    a: 'Tevrix AI is an AI-native BPO platform. It replaces human agents in repetitive business operations — customer care, HR, finance, document processing — with autonomous AI agents. Each agent handles end-to-end workflows 24/7 across 120+ languages, with no shift premiums or attrition costs.',
+  },
+  {
+    q: 'How much does Tevrix AI cost compared to traditional BPO?',
+    a: 'A Core subscription starts at ₹40,000 per month — covering six AI agents. A comparable 10-person human team costs ₹4,25,000+ per month when salaries, office, training, and night-shift premiums are included. That is an 85%+ cost reduction, with faster response times and zero downtime.',
+  },
+  {
+    q: 'Can Tevrix AI handle multiple Indian languages?',
+    a: 'Yes. Tevrix AI supports 120+ languages natively — including all 22 scheduled Indian languages such as Hindi, Bengali, Tamil, Telugu, Kannada, Marathi, and Gujarati. This is native multilingual processing, not translation, so every customer is understood in their own language.',
+  },
+  {
+    q: 'How long does it take to deploy Tevrix AI?',
+    a: 'Standard deployments take 4 to 6 weeks from kickoff to go-live. We begin with a 30-day pilot on one process so you can measure results before committing to a full rollout. No six-month implementation cycles. No consultant required.',
+  },
+  {
+    q: 'Is there a free trial or pilot program?',
+    a: 'Yes. We offer a 30-day pilot on one workflow of your choice. You see real output data and cost savings before signing a subscription. Book a demo call and we will scope the pilot within 48 hours.',
+  },
+  {
+    q: 'Which industries does Tevrix AI support?',
+    a: 'Tevrix AI is built for high-volume operations across e-commerce, banking and finance, healthcare, telecom, insurance, logistics, real estate, and education. Custom process design is also available for any industry with unique workflows.',
+  },
+  {
+    q: 'How is Tevrix AI different from a standard chatbot?',
+    a: 'Chatbots handle simple Q&A. Tevrix AI runs a coordinated system of AI agents — each one specialised for a different step in your workflow. One agent parses intent, another retrieves context, another resolves the query, another logs the outcome. Together they handle complex, multi-step processes that no single chatbot can.',
+  },
+];
+
+const FAQ = () => {
+  const [open, setOpen] = useState(null);
+  return (
+    <section id="faq" className="relative py-20 md:py-28 px-6 overflow-hidden">
+      <div className="max-w-3xl mx-auto">
+        <div className="text-center mb-12">
+          <motion.span
+            initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+            className="label-badge mb-5 inline-flex"
+          >
+            <Sparkles className="w-3.5 h-3.5 fill-current opacity-70" /> Common Questions
+          </motion.span>
+          <motion.h2
+            initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            className="text-4xl md:text-5xl text-slate-950 mb-4"
+          >
+            Frequently Asked Questions
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} viewport={{ once: true }}
+            className="text-slate-500 text-lg"
+          >
+            Everything enterprise buyers ask before their first call.
+          </motion.p>
+        </div>
+
+        <div className="space-y-3">
+          {FAQ_ITEMS.map((item, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.05 }} viewport={{ once: true }}
+              className="card-3d overflow-hidden"
+            >
+              <button
+                onClick={() => setOpen(open === i ? null : i)}
+                className="w-full flex items-center justify-between gap-4 p-6 text-left"
+                aria-expanded={open === i}
+              >
+                <span className="text-[15px] font-semibold text-slate-900">{item.q}</span>
+                <ChevronDown
+                  className={`w-5 h-5 text-amber-500 flex-shrink-0 transition-transform duration-200 ${open === i ? 'rotate-180' : ''}`}
+                />
+              </button>
+              {open === i && (
+                <div className="px-6 pb-6 text-slate-500 text-[14px] leading-relaxed border-t border-black/[0.05] pt-4">
+                  {item.a}
+                </div>
+              )}
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+/* ============================================================
    CONTACT (inline form, not modal)
    ============================================================ */
 const Contact = () => {
@@ -912,9 +1081,12 @@ export default function Home({ onDemo }) {
       <AIBPOTeaser />
       <ServicesSection />
       <SectorsSection />
+      <VoiceDemoSection />
       <IndiaSection />
       <Manifesto onDemo={onDemo} />
       <WhyTevrixWins />
+      <PilotCTA onDemo={onDemo} />
+      <FAQ />
       <Contact />
       <Footer onDemo={onDemo} />
     </main>
