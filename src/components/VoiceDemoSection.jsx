@@ -170,6 +170,7 @@ function useAudioCapture() {
   const analyzerRef = useRef(null);
   const levelsRef = useRef(new Float32Array(AUDIO_BINS).fill(0));
   const smoothedRef = useRef(new Float32Array(AUDIO_BINS).fill(0));
+  const amplitudeRef = useRef(0);
   const streamRef = useRef(null);
   const ctxRef = useRef(null);
   const speakerRef = useRef('idle');
@@ -223,6 +224,8 @@ function useAudioCapture() {
     if (!analyzerRef.current) {
       // No mic — generate fake voice data for demo feel
       const t = Date.now() / 1000;
+      const fakeAmp = (Math.sin(t * 2.5) + 1) / 2 * 0.5 + 0.2;
+      amplitudeRef.current += (fakeAmp - amplitudeRef.current) * 0.15;
       for (let i = 0; i < AUDIO_BINS; i++) {
         const fake = (Math.sin(t * 3 + i * 0.8) + 1) / 2 * 0.4 + Math.random() * 0.15;
         smoothedRef.current[i] += (fake - smoothedRef.current[i]) * 0.15;
@@ -233,10 +236,15 @@ function useAudioCapture() {
     const raw = new Uint8Array(analyzerRef.current.frequencyBinCount);
     analyzerRef.current.getByteFrequencyData(raw);
 
+    let sum = 0;
     for (let i = 0; i < AUDIO_BINS; i++) {
-      levelsRef.current[i] = (raw[i % raw.length] || 0) / 255;
-      smoothedRef.current[i] += (levelsRef.current[i] - smoothedRef.current[i]) * 0.25;
+      const v = (raw[i % raw.length] || 0) / 255;
+      levelsRef.current[i] = v;
+      smoothedRef.current[i] += (v - smoothedRef.current[i]) * 0.25;
+      sum += v;
     }
+    const targetAmp = Math.min(1, (sum / AUDIO_BINS) * 2.2);
+    amplitudeRef.current += (targetAmp - amplitudeRef.current) * 0.3;
 
     const avg = raw.reduce((a, b) => a + b, 0) / raw.length;
     const now = Date.now();
@@ -258,24 +266,29 @@ function useAudioCapture() {
     }
   }, [updateSpeaker]);
 
-  return { speaker, smoothedRef, start, stop, tick, hasMicRef };
+  return { speaker, smoothedRef, amplitudeRef, start, stop, tick, hasMicRef };
 }
 
 /* ── Conversation Visualizer ─────────────────────────────── */
-function ConversationVisualizer({ isConnected, colorKey, accentClass, speaker, smoothedRef, tickAudio, timeLeft, agentName }) {
-  const blobRef = useRef(null);
-  const glowRef = useRef(null);
-  const rafRef = useRef(null);
-  const phaseRef = useRef(0);
-  const blobSmoothedRef = useRef(new Float32Array(BLOB_POINTS).fill(0));
+function ConversationVisualizer({ isConnected, colorKey, accentClass, speaker, amplitudeRef, tickAudio, timeLeft, agentName }) {
+  const orbRef       = useRef(null);
+  const haloRef      = useRef(null);
+  const ring1Ref     = useRef(null);
+  const ring2Ref     = useRef(null);
+  const innerRef     = useRef(null);
+  const rafRef       = useRef(null);
+  const phaseRef     = useRef(0);
+  const breathRef    = useRef(0);
 
   const sc = SVG_COLORS[colorKey];
   const progress = timeLeft / CALL_LIMIT;
-  const progressR = 94;
-  const circumference = 2 * Math.PI * progressR;
-  const dashOffset = circumference - progress * circumference;
+  const SIZE = 240;
+  const RING_R = (SIZE - 8) / 2;
+  const CIRC = 2 * Math.PI * RING_R;
 
-  const isSpeaking = speaker === 'user' || speaker === 'ai';
+  const isUser     = speaker === 'user';
+  const isAI       = speaker === 'ai';
+  const isSpeaking = isUser || isAI;
 
   useEffect(() => {
     if (!isConnected) {
@@ -285,85 +298,179 @@ function ConversationVisualizer({ isConnected, colorKey, accentClass, speaker, s
 
     const animate = () => {
       tickAudio();
-      const levels = smoothedRef.current;
-      const isUser = speaker === 'user';
-      const isAI = speaker === 'ai';
+      const amp = amplitudeRef.current; // 0..1
+      const t   = Date.now() / 1000;
 
-      phaseRef.current += isSpeaking ? 0.02 : 0.008;
+      // Phase advances faster when speaking
+      phaseRef.current += isSpeaking ? 0.025 : 0.012;
       const phase = phaseRef.current;
 
-      for (let i = 0; i < BLOB_POINTS; i++) {
-        let target;
-        if (isUser) {
-          const avgLevel = (levels[i * 3] + (levels[i * 3 + 1] || 0) + (levels[i * 3 + 2] || 0)) / 3;
-          target = avgLevel * 18 + Math.sin(phase * 2 + i * 0.9) * 3;
-        } else if (isAI) {
-          target = Math.sin(phase + i * 1.2) * 10 + Math.sin(phase * 1.7 + i * 0.9) * 6 + 4;
-        } else {
-          target = Math.sin(phase + i * 0.8) * 3;
-        }
-        blobSmoothedRef.current[i] += (target - blobSmoothedRef.current[i]) * (isSpeaking ? 0.06 : 0.05);
+      // Ambient "breath" — always alive, like a heartbeat
+      const breath = (Math.sin(t * 1.4) + 1) / 2; // 0..1
+      breathRef.current = breath;
+
+      // Orb scale: user → amplitude-driven (spiky), AI → smooth breath (rhythmic), idle → gentle
+      let orbScale, orbBrightness, haloScale, haloOpacity;
+      if (isUser) {
+        const punch = amp * 0.35;
+        orbScale      = 1 + punch + breath * 0.04;
+        orbBrightness = 1 + amp * 0.15;
+        haloScale     = 1.05 + punch * 1.4 + breath * 0.05;
+        haloOpacity   = 0.45 + amp * 0.35;
+      } else if (isAI) {
+        const wave    = (Math.sin(phase * 1.6) + 1) / 2;
+        orbScale      = 1 + wave * 0.18 + breath * 0.04;
+        orbBrightness = 1 + wave * 0.1;
+        haloScale     = 1.1 + wave * 0.25;
+        haloOpacity   = 0.4 + wave * 0.25;
+      } else {
+        orbScale      = 1 + breath * 0.04;
+        orbBrightness = 1;
+        haloScale     = 1 + breath * 0.04;
+        haloOpacity   = 0.18;
       }
 
-      if (blobRef.current) {
-        blobRef.current.setAttribute('d', blobPath(CTR, CTR, INNER_R + 2, blobSmoothedRef.current, BLOB_POINTS));
+      if (orbRef.current) {
+        orbRef.current.style.transform = `scale(${orbScale.toFixed(3)})`;
+        orbRef.current.style.filter    = `brightness(${orbBrightness.toFixed(3)}) saturate(${(1 + amp * 0.2).toFixed(3)})`;
       }
-
-      if (glowRef.current) {
-        const avgLevel = isUser ? (levels[0] + levels[1] + levels[2]) / 3 : 0;
-        const glowScale = isSpeaking ? 1.15 + (isUser ? avgLevel * 0.4 : Math.sin(phase) * 0.15) : 1;
-        const glowOpacity = isSpeaking ? 0.25 + (isUser ? avgLevel * 0.3 : Math.sin(phase) * 0.1) : 0.05;
-        glowRef.current.setAttribute('transform', `translate(${CTR}, ${CTR}) scale(${glowScale})`);
-        glowRef.current.setAttribute('opacity', String(glowOpacity));
+      if (innerRef.current) {
+        // Inner highlight slowly rotates for a "live" feel
+        const rot = (t * 18) % 360;
+        innerRef.current.style.transform = `rotate(${rot.toFixed(1)}deg)`;
+      }
+      if (haloRef.current) {
+        haloRef.current.style.transform = `translate(-50%, -50%) scale(${haloScale.toFixed(3)})`;
+        haloRef.current.style.opacity   = haloOpacity.toFixed(3);
+      }
+      // Outer rings: amplify when speaking
+      if (ring1Ref.current) {
+        ring1Ref.current.style.opacity = (isSpeaking ? 0.7 + amp * 0.3 : 0).toFixed(2);
+      }
+      if (ring2Ref.current) {
+        ring2Ref.current.style.opacity = (isSpeaking ? 0.5 + amp * 0.3 : 0).toFixed(2);
       }
 
       rafRef.current = requestAnimationFrame(animate);
     };
     rafRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(rafRef.current);
-  }, [isConnected, speaker, smoothedRef, tickAudio, isSpeaking]);
+  }, [isConnected, isSpeaking, isUser, isAI, amplitudeRef, tickAudio]);
+
+  // Ring animation duration — quicker when someone speaks
+  const ringDur = isSpeaking ? '2.4s' : '4s';
 
   return (
     <div className="flex flex-col items-center gap-4">
-      {/* Circular progress + blob + ripples */}
-      <div className="relative w-[120px] h-[120px] flex items-center justify-center">
-        <svg width="120" height="120" className="absolute inset-0 -rotate-90">
-          <circle cx="60" cy="60" r={progressR / 2}
-            fill="none" stroke="rgba(0,0,0,0.04)" strokeWidth="4"
-          />
-          <circle cx="60" cy="60" r={progressR / 2}
-            fill="none" stroke={`url(#progGrad-${colorKey})`} strokeWidth="4"
-            strokeLinecap="round"
-            strokeDasharray={Math.PI * progressR}
-            strokeDashoffset={Math.PI * progressR - progress * Math.PI * progressR}
-            style={{ transition: 'stroke-dashoffset 0.5s ease' }}
-          />
+      {/* Visualizer canvas */}
+      <div
+        className="relative flex items-center justify-center"
+        style={{ width: SIZE, height: SIZE }}
+      >
+        {/* Progress timer ring (outermost) */}
+        <svg
+          width={SIZE} height={SIZE}
+          className="absolute inset-0 -rotate-90 pointer-events-none"
+        >
           <defs>
             <linearGradient id={`progGrad-${colorKey}`} x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor={sc.c1} />
+              <stop offset="0%"   stopColor={sc.c1} />
               <stop offset="100%" stopColor={sc.c2} />
             </linearGradient>
           </defs>
+          <circle
+            cx={SIZE / 2} cy={SIZE / 2} r={RING_R}
+            fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth="2.5"
+          />
+          <circle
+            cx={SIZE / 2} cy={SIZE / 2} r={RING_R}
+            fill="none" stroke={`url(#progGrad-${colorKey})`} strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeDasharray={CIRC}
+            strokeDashoffset={CIRC - progress * CIRC}
+            style={{ transition: 'stroke-dashoffset 0.5s ease' }}
+          />
         </svg>
 
-        {/* Ripple rings — show for both user and AI speaking */}
-        {isSpeaking && [0, 1, 2].map(i => (
-          <span
-            key={`ripple-${i}`}
-            className="absolute rounded-full"
+        {/* Soft halo behind orb (driven by amplitude) */}
+        <div
+          ref={haloRef}
+          className="absolute rounded-full pointer-events-none"
+          style={{
+            left: '50%', top: '50%',
+            width: 180, height: 180,
+            background: `radial-gradient(circle, ${sc.c1}55 0%, ${sc.c1}00 70%)`,
+            filter: 'blur(20px)',
+            transform: 'translate(-50%, -50%) scale(1)',
+            opacity: 0.18,
+            transition: 'opacity 0.2s ease',
+            willChange: 'transform, opacity',
+          }}
+        />
+
+        {/* Continuous pulse rings — only render while speaking */}
+        {isSpeaking && (
+          <>
+            <div
+              ref={ring1Ref}
+              className="absolute rounded-full pointer-events-none"
+              style={{
+                left: '50%', top: '50%',
+                width: 110, height: 110,
+                marginLeft: -55, marginTop: -55,
+                border: `2px solid ${sc.c1}`,
+                animation: `voice-pulse ${ringDur} cubic-bezier(0.22, 1, 0.36, 1) infinite`,
+                willChange: 'transform, opacity',
+              }}
+            />
+            <div
+              ref={ring2Ref}
+              className="absolute rounded-full pointer-events-none"
+              style={{
+                left: '50%', top: '50%',
+                width: 110, height: 110,
+                marginLeft: -55, marginTop: -55,
+                border: `1.5px solid ${sc.c1}`,
+                animation: `voice-pulse ${ringDur} cubic-bezier(0.22, 1, 0.36, 1) ${parseFloat(ringDur) / 2}s infinite`,
+                willChange: 'transform, opacity',
+              }}
+            />
+          </>
+        )}
+
+        {/* Main orb — gradient sphere that scales with voice */}
+        <div
+          ref={orbRef}
+          className="relative rounded-full flex items-center justify-center overflow-hidden"
+          style={{
+            width: 110, height: 110,
+            background: `radial-gradient(circle at 30% 25%, ${sc.c1}, ${sc.c2})`,
+            boxShadow: `0 8px 32px ${sc.c1}55, 0 0 0 1px ${sc.c1}33, inset 0 -8px 24px ${sc.c2}66, inset 0 8px 24px rgba(255,255,255,0.25)`,
+            transition: 'transform 0.06s linear, filter 0.12s linear',
+            willChange: 'transform, filter',
+          }}
+        >
+          {/* Rotating inner shimmer */}
+          <div
+            ref={innerRef}
+            className="absolute inset-0 rounded-full pointer-events-none"
             style={{
-              width: 64, height: 64,
-              left: '50%', top: '50%',
-              marginLeft: -32, marginTop: -32,
-              border: `2px solid ${sc.c1}`,
-              animation: `voice-ripple 2.8s ease-out ${i * 0.8}s infinite`,
+              background: `conic-gradient(from 0deg, transparent 0deg, rgba(255,255,255,0.25) 90deg, transparent 180deg, rgba(255,255,255,0.15) 270deg, transparent 360deg)`,
+              mixBlendMode: 'overlay',
+              willChange: 'transform',
             }}
           />
-        ))}
-
-        {/* Center blob */}
-        <div className={`w-16 h-16 rounded-full flex items-center justify-center bg-gradient-to-br ${accentClass} shadow-xl relative z-10`}>
-          <Mic className="w-7 h-7 text-white" />
+          {/* Inner highlight (top-left glossy spot) */}
+          <div
+            className="absolute rounded-full pointer-events-none"
+            style={{
+              top: 12, left: 18, width: 26, height: 16,
+              background: 'radial-gradient(ellipse, rgba(255,255,255,0.55), rgba(255,255,255,0) 70%)',
+              filter: 'blur(2px)',
+            }}
+          />
+          {/* Mic icon */}
+          <Mic className="w-8 h-8 text-white relative z-10 drop-shadow-md" strokeWidth={2.2} />
         </div>
       </div>
 
@@ -378,13 +485,17 @@ function ConversationVisualizer({ isConnected, colorKey, accentClass, speaker, s
           className="flex items-center gap-2"
         >
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60"
-              style={{ backgroundColor: isSpeaking ? sc.c1 : '#cbd5e1' }} />
-            <span className="relative inline-flex rounded-full h-2 w-2"
-              style={{ backgroundColor: isSpeaking ? sc.c1 : '#cbd5e1' }} />
+            <span
+              className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60"
+              style={{ backgroundColor: isSpeaking ? sc.c1 : '#cbd5e1' }}
+            />
+            <span
+              className="relative inline-flex rounded-full h-2 w-2"
+              style={{ backgroundColor: isSpeaking ? sc.c1 : '#cbd5e1' }}
+            />
           </span>
           <span className="text-[13px] font-semibold text-slate-700">
-            {speaker === 'user' ? 'You' : speaker === 'ai' ? agentName : 'Listening...'}
+            {isUser ? 'You' : isAI ? `${agentName} speaking` : 'Listening...'}
           </span>
         </motion.div>
       </AnimatePresence>
@@ -453,7 +564,7 @@ export default function VoiceDemoSection() {
   const timerRef  = useRef(null);
   const cleanupFn = useRef(null);
 
-  const { speaker, smoothedRef, start: startAudio, stop: stopAudio, tick: tickAudio, hasMicRef } = useAudioCapture();
+  const { speaker, amplitudeRef, start: startAudio, stop: stopAudio, tick: tickAudio } = useAudioCapture();
 
   const industry = INDUSTRIES.find(i => i.id === activeId);
   const colors   = COLOR_MAP[industry.color];
@@ -548,6 +659,11 @@ export default function VoiceDemoSection() {
       @keyframes voice-ripple {
         0%   { transform: scale(1); opacity: 0.35; }
         100% { transform: scale(3.2); opacity: 0; }
+      }
+      @keyframes voice-pulse {
+        0%   { transform: scale(0.85); opacity: 0.9; }
+        70%  { opacity: 0.15; }
+        100% { transform: scale(2.4); opacity: 0; }
       }
     `;
     document.head.appendChild(style);
@@ -727,7 +843,7 @@ export default function VoiceDemoSection() {
                           colorKey={industry.color}
                           accentClass={colors.accent}
                           speaker={speaker}
-                          smoothedRef={smoothedRef}
+                          amplitudeRef={amplitudeRef}
                           tickAudio={tickAudio}
                           timeLeft={timeLeft}
                           agentName={industry.agent}
