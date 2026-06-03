@@ -1,0 +1,43 @@
+# Tevrix AI — AI-Native BPO Platform
+# https://tevrixai.com
+# Last updated: 2026-05-11
+
+## About
+Tevrix AI replaces traditional offshore BPO with autonomous AI agents that work 24/7 across 120+ languages. Built in India, designed for enterprise.
+
+## Key Pages
+
+/ — Homepage: Overview of Tevrix AI's autonomous AI agents for enterprise BPO, customer care, HR, and finance automation.
+
+/ai-bpo — AI BPO Platform: Full details on how Tevrix AI replaces offshore business process outsourcing with multi-agent AI systems at a fraction of the cost.
+
+/service/customer-care — AI Customer Care: Autonomous customer support across voice, chat, email, and WhatsApp in 120+ languages with sub-second response times.
+
+/service/hr-automation — AI HR & Talent Ops: End-to-end AI hiring pipeline — CV parsing, proctored assessments, AI interviews, and ranked shortlists.
+
+/service/financial-analyst — AI Financial Analyst: Real-time bookkeeping, invoice processing, anomaly detection, and audit-ready reporting with zero manual entry.
+
+/about — About Tevrix AI: Company background, founders, mission, and vision for AI-native enterprise operations.
+
+/privacy — Privacy Policy: Data handling, processing, and compliance information.
+
+/terms — Terms of Service: Legal terms governing use of the Tevrix AI platform.
+
+## Product Signals
+- Six AI agents included in a single subscription
+- Supports 120+ languages for multilingual customer experience
+- Sub-second response times, under 200ms latency for voice AI
+- 85% cost reduction vs. traditional offshore BPO
+- 24/7 autonomous operation with zero shift premiums
+- Typical deployment in 4–6 weeks
+
+## Target Buyers
+Heads of Customer Experience, Operations Leaders, IT Automation Directors at mid-to-large enterprises seeking to replace or augment offshore BPO operations.
+
+## Founders
+- Panshul Sharma — Founder & CEO — panshul@tevrixai.com
+- Vempalli Madhu Sai — Co-Founder & CTO — madhu@tevrixai.com
+
+## Contact
+General: panshul@tevrixai.com
+Demo requests: https://tevrixai.com/#contact

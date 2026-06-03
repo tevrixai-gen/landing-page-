@@ -9,7 +9,6 @@ import {
 } from 'lucide-react';
 import { BPO_STATS } from '../data';
 import { ServiceCards, SectorCards } from '../Cards';
-import heroAbstract from '../assets/tevrix_unique_core_1775459546265.png';
 const logo = '/logo.png';
 
 /* ============================================================
@@ -148,22 +147,6 @@ const Hero = ({ onDemo }) => {
           ))}
         </motion.div>
 
-        {/* Hero visual */}
-        <motion.div
-          initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-16 relative max-w-2xl mx-auto"
-        >
-          <img
-            src={heroAbstract}
-            alt="Tevrix AI autonomous agent platform — AI nodes coordinating enterprise BPO workflows"
-            className="w-full rounded-2xl shadow-2xl shadow-amber-500/10 border border-black/[0.06]"
-            loading="eager"
-            width="800"
-            height="500"
-          />
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-white/40 via-transparent to-transparent pointer-events-none" />
-        </motion.div>
       </div>
 
       {/* Aurora glow — Sarvam-style warm sunset bleeding up from footer */}

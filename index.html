@@ -7,11 +7,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://fonts.googleapis.com">
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
+    <!-- Non-render-blocking font load: preload as style, swap to stylesheet on load -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"></noscript>
     <link rel="preload" as="image" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tevrix AI - Multilingual AI BPO for India, AI HR, and Enterprise Automation</title>
-    <meta name="description" content="Tevrix AI engineers autonomous systems that eradicate inefficiency and slash operational costs. Discover our multi-agentic AI BPO for the Indian market." />
+    <title>Tevrix AI | AI-Native BPO & Enterprise Automation</title>
+    <meta name="description" content="Tevrix AI replaces traditional outsourcing with autonomous AI agents that handle customer care, HR, and finance 24/7 across 120+ languages. Built in India." />
     <meta name="keywords" content="Tevrix AI, AI BPO India, AI HR, Enterprise Automation, Autonomous AI, Multilingual AI" />
     <script type="application/ld+json">
     {
@@ -32,6 +34,64 @@
         "https://www.linkedin.com/company/tevrixai/",
         "https://www.linkedin.com/in/panshulsharma777/",
         "https://www.linkedin.com/in/madhu-sai-vempalli-72205a3b9/"
+      ]
+    }
+    </script>
+
+    <!-- FAQ Structured Data for AI/GEO Citability -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is Tevrix AI and how does it work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Tevrix AI is an AI-native BPO platform. It replaces human agents in repetitive business operations — customer care, HR, finance, and document processing — with autonomous AI agents that work 24/7 across 120+ languages, with no shift premiums or attrition costs."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much does Tevrix AI cost compared to traditional BPO?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A Core subscription starts at ₹40,000 per month — covering six AI agents. A comparable 10-person human team costs ₹4,25,000+ per month. That is an 85%+ cost reduction, with faster response times and zero downtime."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can Tevrix AI handle multiple Indian languages?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Tevrix AI supports 120+ languages natively — including all 22 scheduled Indian languages such as Hindi, Bengali, Tamil, Telugu, and Kannada. This is native multilingual processing, not translation."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How long does it take to deploy Tevrix AI?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Standard deployments take 4 to 6 weeks from kickoff to go-live. We begin with a 30-day pilot on one process so you can measure results before committing to a full rollout."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is there a free trial or pilot program?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Tevrix AI offers a 30-day pilot on one workflow of your choice. You see real output data and cost savings before signing a subscription. Book a demo call and we will scope the pilot within 48 hours."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Which industries does Tevrix AI support?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Tevrix AI supports e-commerce, banking, healthcare, telecom, insurance, logistics, real estate, and education. Custom process design is available for any industry with unique workflows."
+          }
+        }
       ]
     }
     </script>
