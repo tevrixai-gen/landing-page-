@@ -1,4 +1,10 @@
 {
+  "rewrites": [
+    {
+      "source": "/dograh-api/:path*",
+      "destination": "https://api.dograh.com/:path*"
+    }
+  ],
   "redirects": [
     {
       "source": "/:path*",

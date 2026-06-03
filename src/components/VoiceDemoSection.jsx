@@ -100,7 +100,7 @@ function loadDograhScript(token, onReady, onFail) {
   script.async = true;
   script.src =
     `https://app.dograh.com/embed/dograh-widget.js` +
-    `?token=${token}&environment=production&apiEndpoint=https://api.dograh.com`;
+    `?token=${token}&environment=production&apiEndpoint=https://tevrixai.com/dograh-api`;
 
   // Handle script load failure
   script.onerror = () => { if (onFail) onFail(); };
