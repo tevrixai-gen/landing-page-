@@ -2,6 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <!-- Dograh WebSocket rewrite: must run BEFORE any other script.
+         Vercel rewrites proxy HTTP to api.dograh.com but can't handle wss://.
+         This redirects WebSocket connections directly to api.dograh.com. -->
+    <script>
+      (function(){
+        var R=window.WebSocket;
+        window.WebSocket=new Proxy(R,{
+          construct:function(T,A){
+            if(typeof A[0]==="string"&&A[0].indexOf("tevrixai.com/dograh-api")!==-1){
+              A[0]=A[0].replace("wss://tevrixai.com/dograh-api","wss://api.dograh.com");
+            }
+            return new T(A[0],A[1]);
+          }
+        });
+      })();
+    </script>
     <link rel="icon" type="image/png" href="/logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
