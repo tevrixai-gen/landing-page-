@@ -82,18 +82,15 @@ const CALL_LIMIT = 60; // 1-minute cap
 // Vercel can't proxy WebSocket. Redirect wss:// calls directly to
 // api.dograh.com — WebSocket is NOT subject to browser CORS enforcement.
 if (!window._dograhWsPatched) {
-  const _WS = window.WebSocket;
-  window.WebSocket = function (url, protocols) {
-    if (typeof url === 'string' && url.includes('tevrixai.com/dograh-api')) {
-      url = url.replace('wss://tevrixai.com/dograh-api', 'wss://api.dograh.com');
-    }
-    return protocols !== undefined ? new _WS(url, protocols) : new _WS(url);
-  };
-  window.WebSocket.prototype = _WS.prototype;
-  window.WebSocket.CONNECTING = _WS.CONNECTING;
-  window.WebSocket.OPEN = _WS.OPEN;
-  window.WebSocket.CLOSING = _WS.CLOSING;
-  window.WebSocket.CLOSED = _WS.CLOSED;
+  const _OrigWS = window.WebSocket;
+  window.WebSocket = new Proxy(_OrigWS, {
+    construct(target, args) {
+      if (typeof args[0] === 'string' && args[0].includes('tevrixai.com/dograh-api')) {
+        args[0] = args[0].replace('wss://tevrixai.com/dograh-api', 'wss://api.dograh.com');
+      }
+      return new target(...args);
+    },
+  });
   window._dograhWsPatched = true;
 }
 
