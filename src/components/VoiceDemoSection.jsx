@@ -301,54 +301,47 @@ function ConversationVisualizer({ isConnected, colorKey, accentClass, speaker, a
       const amp = amplitudeRef.current; // 0..1
       const t   = Date.now() / 1000;
 
-      // Phase advances faster when speaking
-      phaseRef.current += isSpeaking ? 0.025 : 0.012;
+      phaseRef.current += isSpeaking ? 0.012 : 0.004;
       const phase = phaseRef.current;
 
-      // Ambient "breath" — always alive, like a heartbeat
-      const breath = (Math.sin(t * 1.4) + 1) / 2; // 0..1
-      breathRef.current = breath;
+      // Orb stays calm at idle. Only animates when the call is actually happening.
+      let orbScale, haloScale, haloOpacity;
 
-      // Orb scale: user → amplitude-driven (spiky), AI → smooth breath (rhythmic), idle → gentle
-      let orbScale, orbBrightness, haloScale, haloOpacity;
       if (isUser) {
-        const punch = amp * 0.35;
-        orbScale      = 1 + punch + breath * 0.04;
-        orbBrightness = 1 + amp * 0.15;
-        haloScale     = 1.05 + punch * 1.4 + breath * 0.05;
-        haloOpacity   = 0.45 + amp * 0.35;
+        // Amplitude-driven, smoothly clamped — subtle, no jitter
+        const punch = Math.min(0.18, amp * 0.22);
+        orbScale    = 1 + punch;
+        haloScale   = 1 + punch * 1.3;
+        haloOpacity = 0.28 + amp * 0.25;
       } else if (isAI) {
-        const wave    = (Math.sin(phase * 1.6) + 1) / 2;
-        orbScale      = 1 + wave * 0.18 + breath * 0.04;
-        orbBrightness = 1 + wave * 0.1;
-        haloScale     = 1.1 + wave * 0.25;
-        haloOpacity   = 0.4 + wave * 0.25;
+        // Slow rhythmic wave — much calmer than before
+        const wave  = (Math.sin(phase * 0.9) + 1) / 2;   // 0..1, slow
+        orbScale    = 1 + wave * 0.08;
+        haloScale   = 1 + wave * 0.12;
+        haloOpacity = 0.22 + wave * 0.15;
       } else {
-        orbScale      = 1 + breath * 0.04;
-        orbBrightness = 1;
-        haloScale     = 1 + breath * 0.04;
-        haloOpacity   = 0.18;
+        // Idle — completely still
+        orbScale    = 1;
+        haloScale   = 1;
+        haloOpacity = 0.12;
       }
 
       if (orbRef.current) {
         orbRef.current.style.transform = `scale(${orbScale.toFixed(3)})`;
-        orbRef.current.style.filter    = `brightness(${orbBrightness.toFixed(3)}) saturate(${(1 + amp * 0.2).toFixed(3)})`;
       }
       if (innerRef.current) {
-        // Inner highlight slowly rotates for a "live" feel
-        const rot = (t * 18) % 360;
+        const rot = (t * 12) % 360; // gentle rotation
         innerRef.current.style.transform = `rotate(${rot.toFixed(1)}deg)`;
       }
       if (haloRef.current) {
         haloRef.current.style.transform = `translate(-50%, -50%) scale(${haloScale.toFixed(3)})`;
         haloRef.current.style.opacity   = haloOpacity.toFixed(3);
       }
-      // Outer rings: amplify when speaking
       if (ring1Ref.current) {
-        ring1Ref.current.style.opacity = (isSpeaking ? 0.7 + amp * 0.3 : 0).toFixed(2);
+        ring1Ref.current.style.opacity = (isSpeaking ? 0.6 + amp * 0.2 : 0).toFixed(2);
       }
       if (ring2Ref.current) {
-        ring2Ref.current.style.opacity = (isSpeaking ? 0.5 + amp * 0.3 : 0).toFixed(2);
+        ring2Ref.current.style.opacity = (isSpeaking ? 0.4 + amp * 0.2 : 0).toFixed(2);
       }
 
       rafRef.current = requestAnimationFrame(animate);
@@ -445,9 +438,9 @@ function ConversationVisualizer({ isConnected, colorKey, accentClass, speaker, a
           style={{
             width: 110, height: 110,
             background: `radial-gradient(circle at 30% 25%, ${sc.c1}, ${sc.c2})`,
-            boxShadow: `0 8px 32px ${sc.c1}55, 0 0 0 1px ${sc.c1}33, inset 0 -8px 24px ${sc.c2}66, inset 0 8px 24px rgba(255,255,255,0.25)`,
-            transition: 'transform 0.06s linear, filter 0.12s linear',
-            willChange: 'transform, filter',
+            boxShadow: `0 10px 40px ${sc.c1}40, 0 0 0 1px ${sc.c1}22, inset 0 -10px 28px ${sc.c2}55, inset 0 8px 24px rgba(255,255,255,0.22)`,
+            transition: 'transform 0.12s ease-out',
+            willChange: 'transform',
           }}
         >
           {/* Rotating inner shimmer */}
@@ -817,14 +810,13 @@ export default function VoiceDemoSection() {
                 </div>
               </div>
 
-              {/* Right — call panel */}
-              <div className={`relative p-6 md:p-8 flex flex-col items-center justify-center gap-4 min-w-[280px]
-                bg-gradient-to-b ${colors.accentLight} md:bg-gradient-to-br`}>
-
-                <div className="absolute inset-0 opacity-[0.02]"
+              {/* Right — call panel (unified with card, no heavy tint) */}
+              <div className="relative p-6 md:p-8 flex flex-col items-center justify-center gap-4 min-w-[300px]">
+                {/* Very subtle radial tint from the orb's color, fading to transparent */}
+                <div
+                  className="absolute inset-0 pointer-events-none"
                   style={{
-                    backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)',
-                    backgroundSize: '24px 24px',
+                    background: `radial-gradient(ellipse 60% 70% at 50% 50%, ${SVG_COLORS[industry.color].c1}0d, transparent 70%)`,
                   }}
                 />
 
@@ -888,10 +880,41 @@ export default function VoiceDemoSection() {
                         exit={{ opacity: 0, scale: 0.9 }}
                         className="flex flex-col items-center gap-3"
                       >
-                        <div className="w-16 h-16 rounded-full bg-white/80 backdrop-blur flex items-center justify-center shadow-sm">
-                          <MicOff className="w-7 h-7 text-slate-300" />
+                        {/* Idle orb preview — same orb as during call, but completely still */}
+                        <div className="relative flex items-center justify-center" style={{ width: 140, height: 140 }}>
+                          {/* Soft halo */}
+                          <div
+                            className="absolute rounded-full pointer-events-none"
+                            style={{
+                              left: '50%', top: '50%',
+                              width: 130, height: 130,
+                              marginLeft: -65, marginTop: -65,
+                              background: `radial-gradient(circle, ${SVG_COLORS[industry.color].c1}33 0%, ${SVG_COLORS[industry.color].c1}00 70%)`,
+                              filter: 'blur(16px)',
+                              opacity: 0.5,
+                            }}
+                          />
+                          <div
+                            className="relative rounded-full flex items-center justify-center"
+                            style={{
+                              width: 90, height: 90,
+                              background: `radial-gradient(circle at 30% 25%, ${SVG_COLORS[industry.color].c1}, ${SVG_COLORS[industry.color].c2})`,
+                              boxShadow: `0 10px 32px ${SVG_COLORS[industry.color].c1}40, 0 0 0 1px ${SVG_COLORS[industry.color].c1}22, inset 0 -8px 22px ${SVG_COLORS[industry.color].c2}55, inset 0 6px 20px rgba(255,255,255,0.22)`,
+                              opacity: isFailed ? 0.45 : 1,
+                            }}
+                          >
+                            <div
+                              className="absolute rounded-full pointer-events-none"
+                              style={{
+                                top: 10, left: 16, width: 22, height: 14,
+                                background: 'radial-gradient(ellipse, rgba(255,255,255,0.5), rgba(255,255,255,0) 70%)',
+                                filter: 'blur(2px)',
+                              }}
+                            />
+                            <Mic className="w-7 h-7 text-white relative z-10 drop-shadow" strokeWidth={2.2} />
+                          </div>
                         </div>
-                        <div className="text-[13px] text-slate-400 text-center font-medium">
+                        <div className="text-[13px] text-slate-500 text-center font-medium">
                           {isFailed ? 'Connection failed' : 'Ready to talk'}
                         </div>
                       </motion.div>
