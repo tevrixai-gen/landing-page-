@@ -137,7 +137,7 @@ const CALL_LIMIT = 60;
 const AUDIO_BINS = 32;
 const VIS = 200;
 const CTR = VIS / 2;
-const INNER_R = 28;
+const INNER_R = 24;
 const BLOB_POINTS = 8;
 
 /* ── Smooth blob path generator ──────────────────────────── */
@@ -262,7 +262,7 @@ function useAudioCapture() {
 }
 
 /* ── Conversation Visualizer ─────────────────────────────── */
-function ConversationVisualizer({ isConnected, colorKey, speaker, smoothedRef, tickAudio, timeLeft, agentName }) {
+function ConversationVisualizer({ isConnected, colorKey, accentClass, speaker, smoothedRef, tickAudio, timeLeft, agentName }) {
   const blobRef = useRef(null);
   const glowRef = useRef(null);
   const rafRef = useRef(null);
@@ -271,7 +271,7 @@ function ConversationVisualizer({ isConnected, colorKey, speaker, smoothedRef, t
 
   const sc = SVG_COLORS[colorKey];
   const progress = timeLeft / CALL_LIMIT;
-  const progressR = 88;
+  const progressR = 94;
   const circumference = 2 * Math.PI * progressR;
   const dashOffset = circumference - progress * circumference;
 
@@ -289,30 +289,30 @@ function ConversationVisualizer({ isConnected, colorKey, speaker, smoothedRef, t
       const isUser = speaker === 'user';
       const isAI = speaker === 'ai';
 
-      phaseRef.current += isSpeaking ? 0.018 : 0.006;
+      phaseRef.current += isSpeaking ? 0.02 : 0.008;
       const phase = phaseRef.current;
 
       for (let i = 0; i < BLOB_POINTS; i++) {
         let target;
         if (isUser) {
           const avgLevel = (levels[i * 3] + (levels[i * 3 + 1] || 0) + (levels[i * 3 + 2] || 0)) / 3;
-          target = avgLevel * 16 + Math.sin(phase * 2 + i * 0.9) * 3;
+          target = avgLevel * 18 + Math.sin(phase * 2 + i * 0.9) * 3;
         } else if (isAI) {
-          target = Math.sin(phase + i * 1.2) * 8 + Math.sin(phase * 1.6 + i * 0.8) * 5 + 3;
+          target = Math.sin(phase + i * 1.2) * 10 + Math.sin(phase * 1.7 + i * 0.9) * 6 + 4;
         } else {
-          target = Math.sin(phase + i * 0.8) * 2;
+          target = Math.sin(phase + i * 0.8) * 3;
         }
-        blobSmoothedRef.current[i] += (target - blobSmoothedRef.current[i]) * (isSpeaking ? 0.08 : 0.05);
+        blobSmoothedRef.current[i] += (target - blobSmoothedRef.current[i]) * (isSpeaking ? 0.06 : 0.05);
       }
 
       if (blobRef.current) {
-        blobRef.current.setAttribute('d', blobPath(CTR, CTR, INNER_R, blobSmoothedRef.current, BLOB_POINTS));
+        blobRef.current.setAttribute('d', blobPath(CTR, CTR, INNER_R + 2, blobSmoothedRef.current, BLOB_POINTS));
       }
 
       if (glowRef.current) {
         const avgLevel = isUser ? (levels[0] + levels[1] + levels[2]) / 3 : 0;
-        const glowScale = isSpeaking ? 1.2 + (isUser ? avgLevel * 0.3 : Math.sin(phase) * 0.12) : 1;
-        const glowOpacity = isSpeaking ? 0.25 + (isUser ? avgLevel * 0.2 : Math.sin(phase) * 0.08) : 0.05;
+        const glowScale = isSpeaking ? 1.15 + (isUser ? avgLevel * 0.4 : Math.sin(phase) * 0.15) : 1;
+        const glowOpacity = isSpeaking ? 0.25 + (isUser ? avgLevel * 0.3 : Math.sin(phase) * 0.1) : 0.05;
         glowRef.current.setAttribute('transform', `translate(${CTR}, ${CTR}) scale(${glowScale})`);
         glowRef.current.setAttribute('opacity', String(glowOpacity));
       }
@@ -325,82 +325,46 @@ function ConversationVisualizer({ isConnected, colorKey, speaker, smoothedRef, t
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <div className="relative w-[200px] h-[200px]">
-        <svg viewBox={`0 0 ${VIS} ${VIS}`} className="w-full h-full" style={{ overflow: 'visible' }}>
+      {/* Circular progress + blob + ripples */}
+      <div className="relative w-[120px] h-[120px] flex items-center justify-center">
+        <svg width="120" height="120" className="absolute inset-0 -rotate-90">
+          <circle cx="60" cy="60" r={progressR / 2}
+            fill="none" stroke="rgba(0,0,0,0.04)" strokeWidth="4"
+          />
+          <circle cx="60" cy="60" r={progressR / 2}
+            fill="none" stroke={`url(#progGrad-${colorKey})`} strokeWidth="4"
+            strokeLinecap="round"
+            strokeDasharray={Math.PI * progressR}
+            strokeDashoffset={Math.PI * progressR - progress * Math.PI * progressR}
+            style={{ transition: 'stroke-dashoffset 0.5s ease' }}
+          />
           <defs>
-            <linearGradient id={`blobGrad-${colorKey}`} x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor={sc.c1} />
-              <stop offset="100%" stopColor={sc.c2} />
-            </linearGradient>
             <linearGradient id={`progGrad-${colorKey}`} x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor={sc.c1} />
               <stop offset="100%" stopColor={sc.c2} />
             </linearGradient>
-            <filter id="blobGlow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="6" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
           </defs>
-
-          {/* Progress ring — subtle track */}
-          <circle cx={CTR} cy={CTR} r={progressR}
-            fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth="2.5"
-          />
-          {/* Progress ring — filled arc */}
-          <circle cx={CTR} cy={CTR} r={progressR}
-            fill="none" stroke={`url(#progGrad-${colorKey})`} strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            strokeDashoffset={dashOffset}
-            transform={`rotate(-90 ${CTR} ${CTR})`}
-            style={{ transition: 'stroke-dashoffset 0.5s ease' }}
-          />
-
-          {/* Ripple rings — show for BOTH user and AI speaking */}
-          {isSpeaking && [0, 1, 2].map(i => (
-            <circle
-              key={`ripple-${i}`}
-              cx={CTR} cy={CTR}
-              r={INNER_R + 4}
-              fill="none"
-              stroke={sc.c1}
-              strokeWidth="1.5"
-              opacity="0"
-              style={{
-                transformOrigin: `${CTR}px ${CTR}px`,
-                transformBox: 'fill-box',
-                animation: `voice-ripple 2.4s ease-out ${i * 0.6}s infinite`,
-              }}
-            />
-          ))}
-
-          {/* Soft glow behind blob */}
-          <circle
-            ref={glowRef}
-            cx={0} cy={0} r={INNER_R + 6}
-            fill={sc.glow}
-            opacity="0.05"
-            transform={`translate(${CTR}, ${CTR}) scale(1)`}
-          />
-
-          {/* Center blob — always industry color */}
-          <path
-            ref={blobRef}
-            d={blobPath(CTR, CTR, INNER_R, new Array(BLOB_POINTS).fill(0), BLOB_POINTS)}
-            fill={`url(#blobGrad-${colorKey})`}
-            filter="url(#blobGlow)"
-          />
-
-          {/* Mic icon inside blob */}
-          <g transform={`translate(${CTR}, ${CTR})`}>
-            <rect x="-2.5" y="-7" width="5" height="9" rx="2.5" fill="white" opacity="0.9" />
-            <path d="M-5 2 a5 5 0 0 0 10 0" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.9" />
-            <line x1="0" y1="7" x2="0" y2="10" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.9" />
-          </g>
         </svg>
+
+        {/* Ripple rings — show for both user and AI speaking */}
+        {isSpeaking && [0, 1, 2].map(i => (
+          <span
+            key={`ripple-${i}`}
+            className="absolute rounded-full"
+            style={{
+              width: 64, height: 64,
+              left: '50%', top: '50%',
+              marginLeft: -32, marginTop: -32,
+              border: `2px solid ${sc.c1}`,
+              animation: `voice-ripple 2.8s ease-out ${i * 0.8}s infinite`,
+            }}
+          />
+        ))}
+
+        {/* Center blob */}
+        <div className={`w-16 h-16 rounded-full flex items-center justify-center bg-gradient-to-br ${accentClass} shadow-xl relative z-10`}>
+          <Mic className="w-7 h-7 text-white" />
+        </div>
       </div>
 
       {/* Speaker label */}
@@ -428,7 +392,7 @@ function ConversationVisualizer({ isConnected, colorKey, speaker, smoothedRef, t
       {/* Timer */}
       <div className="flex items-center gap-2">
         <Clock className="w-3.5 h-3.5 text-slate-400" />
-        <span className={`text-[20px] font-bold tabular-nums ${timeLeft <= 10 ? 'text-red-500' : 'text-slate-700'}`}>
+        <span className={`text-[22px] font-bold tabular-nums ${timeLeft <= 10 ? 'text-red-500' : 'text-slate-700'}`}>
           {fmtTime(timeLeft)}
         </span>
       </div>
@@ -761,6 +725,7 @@ export default function VoiceDemoSection() {
                         <ConversationVisualizer
                           isConnected={status === 'connected'}
                           colorKey={industry.color}
+                          accentClass={colors.accent}
                           speaker={speaker}
                           smoothedRef={smoothedRef}
                           tickAudio={tickAudio}
