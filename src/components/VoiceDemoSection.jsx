@@ -14,12 +14,12 @@ const INDUSTRIES = [
     agent: 'Neha',
     token: 'emb_M1iKGuA9BQprzd7vN_kqr7jVEBSehf6UHGp6X7P9R8A',
     color: 'amber',
-    description: 'AI banking support — balance, transactions, loans, card issues & more.',
+    description: 'Ask Neha anything about banking — FD rates, loans, card rules, transfers, and more.',
     prompts: [
-      'Mera balance check karna hai',
-      'Last 5 transactions bata do',
       'FD rates kya hain 2 saal ke liye?',
-      'Mera card block karna hai',
+      'Home loan ke liye kya documents chahiye?',
+      'NEFT se transfer kitne time mein hota hai?',
+      'Savings account mein minimum balance kitna hai?',
     ],
   },
   {
@@ -29,12 +29,12 @@ const INDUSTRIES = [
     agent: 'Kavya',
     token: 'emb_Y4x_agMPXG9BSqlSmqzE82oN6HzcyaJueHrlknQ2ZP0',
     color: 'violet',
-    description: 'AI order support — tracking, returns, refunds, cancellations & more.',
+    description: 'Ask Kavya about returns, refunds, shipping, payments — anything about online shopping.',
     prompts: [
-      'Mera order kahan hai?',
-      'Wrong size aaya, return karna hai',
-      'Order cancel karna hai',
+      'Return policy kya hai?',
       'Refund kitne din mein aata hai?',
+      'Cash on delivery available hai kya?',
+      'Damaged product mila toh kya karein?',
     ],
   },
   {
@@ -527,7 +527,7 @@ function loadDograhScript(token, onReady, onFail) {
   script.async = true;
   script.src =
     `https://app.dograh.com/embed/dograh-widget.js` +
-    `?token=${token}&environment=production&apiEndpoint=https://tevrixai.com/dograh-api`;
+    `?token=${token}&environment=production&apiEndpoint=https://api.dograh.com`;
 
   script.onerror = () => { if (onFail) onFail(); };
   document.head.appendChild(script);
@@ -638,7 +638,14 @@ export default function VoiceDemoSection() {
     style.textContent = `
       body > div[id*="dograh"]:not([id="root"]),
       body > div[class*="dograh"],
-      body > [data-dograh] { display: none !important; }
+      body > [data-dograh] {
+        position: fixed !important;
+        left: -9999px !important;
+        top: -9999px !important;
+        pointer-events: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+      }
     `;
     document.head.appendChild(style);
   }, []);
@@ -771,7 +778,7 @@ export default function VoiceDemoSection() {
             <div className="grid md:grid-cols-[1fr_auto] gap-0">
 
               {/* Left — info + prompts */}
-              <div className="p-8 md:p-10 border-b md:border-b-0 md:border-r border-black/[0.06]">
+              <div className="p-8 md:p-10">
                 <div className="flex items-center gap-4 mb-8">
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${colors.iconBg} shadow-lg shadow-black/10`}>
                     <Icon className="w-6 h-6 text-white" />
