@@ -16,10 +16,10 @@ const INDUSTRIES = [
     color: 'amber',
     description: 'Ask Neha anything about banking — FD rates, loans, card rules, transfers, and more.',
     prompts: [
-      'FD rates kya hain 2 saal ke liye?',
-      'Home loan ke liye kya documents chahiye?',
-      'NEFT se transfer kitne time mein hota hai?',
-      'Savings account mein minimum balance kitna hai?',
+      'Mera balance check karo',
+      'FD rates kya hain?',
+      'Home loan ke baare mein batao',
+      'Mera card block karna hai',
     ],
   },
   {
@@ -31,10 +31,10 @@ const INDUSTRIES = [
     color: 'violet',
     description: 'Ask Kavya about returns, refunds, shipping, payments — anything about online shopping.',
     prompts: [
-      'Return policy kya hai?',
+      'Mera order kahan hai?',
+      'Return karna hai, wrong size aaya',
       'Refund kitne din mein aata hai?',
-      'Cash on delivery available hai kya?',
-      'Damaged product mila toh kya karein?',
+      'Return policy kya hai?',
     ],
   },
   {
@@ -47,9 +47,9 @@ const INDUSTRIES = [
     description: 'AI telecom care — data balance, plans, roaming, network issues & more.',
     prompts: [
       'Mera data kitna bacha hai?',
-      'Best unlimited plan kaunsa hai?',
-      'US trip ke liye roaming kaise karein?',
-      'Network slow kyun hai?',
+      'Sabse best plan kaunsa hai?',
+      'US ja raha hoon — roaming kaise karoon?',
+      'Number port karna hai',
     ],
   },
   {
@@ -61,9 +61,9 @@ const INDUSTRIES = [
     color: 'rose',
     description: 'AI clinic receptionist — appointments, pricing, doctors & insurance.',
     prompts: [
-      'I want to book a dental cleaning',
-      'What are your clinic hours?',
-      'How much does an eye exam cost?',
+      'Book me a dental cleaning appointment',
+      'What are your clinic timings?',
+      'How much does an eye checkup cost?',
       'Do you accept Star Health insurance?',
     ],
   },
