@@ -332,14 +332,14 @@ function GrainOrb({ colorKey, size, scale, opacity = 1, amplitudeRef, speaker })
       const t = Date.now() / 1000;
       const isSpeaking = speaker === 'user' || speaker === 'ai';
 
-      // Smooth the amplitude so motion eases in/out
-      const targetAmp = isSpeaking ? (amplitudeRef?.current ?? 0.4) : 0;
-      ampSmoothRef.current += (targetAmp - ampSmoothRef.current) * 0.08;
+      // Smooth the amplitude so motion eases in/out (slow easing = calm)
+      const targetAmp = isSpeaking ? (amplitudeRef?.current ?? 0.3) : 0;
+      ampSmoothRef.current += (targetAmp - ampSmoothRef.current) * 0.05;
       const amp = ampSmoothRef.current;
 
-      // Idle: slow gentle drift. Speaking: faster + wider drift.
-      const speed  = 1 + amp * 2.6;
-      const driftR = (0.10 + amp * 0.16) * size;   // how far blob centers roam
+      // Gentle ambient swirl; speaking adds only a subtle lift in pace/range.
+      const speed  = 0.7 + amp * 0.9;
+      const driftR = (0.08 + amp * 0.06) * size;   // how far blob centers roam
 
       blobRefs.current.forEach((el, i) => {
         if (!el) return;
@@ -348,8 +348,8 @@ function GrainOrb({ colorKey, size, scale, opacity = 1, amplitudeRef, speaker })
         const cy = c.hy * size + Math.cos(t * c.fy * speed + c.ph * 1.3) * driftR;
         el.setAttribute('cx', cx.toFixed(2));
         el.setAttribute('cy', cy.toFixed(2));
-        // Blobs swell slightly with voice
-        el.setAttribute('r', ((c.r + amp * 0.12) * half).toFixed(2));
+        // Blobs swell very slightly with voice
+        el.setAttribute('r', ((c.r + amp * 0.05) * half).toFixed(2));
       });
 
       rafRef.current = requestAnimationFrame(animate);
@@ -366,8 +366,8 @@ function GrainOrb({ colorKey, size, scale, opacity = 1, amplitudeRef, speaker })
         willChange: 'transform',
         position: 'relative',
         flexShrink: 0,
-        borderRadius: '50%',
-        filter: `drop-shadow(0 20px 50px ${oc.shadowColor}) drop-shadow(0 8px 24px ${oc.shadowColor})`,
+        // soft colored glow — no heavy drop shadow, so it reads as light
+        filter: `drop-shadow(0 0 ${size * 0.18}px ${oc.haloColor}) drop-shadow(0 8px 26px ${oc.shadowColor})`,
         opacity,
       }}
     >
@@ -378,42 +378,55 @@ function GrainOrb({ colorKey, size, scale, opacity = 1, amplitudeRef, speaker })
         style={{ position: 'absolute', inset: 0 }}
       >
         <defs>
-          {/* Drifting color clouds — fade to transparent so they blend like fluid */}
+          {/* Edge-fade mask — orb melts softly into the page, no hard rim */}
+          <radialGradient id={`mg-${filterId}`} gradientUnits="userSpaceOnUse"
+            cx={half} cy={half} r={half}>
+            <stop offset="0%"   stopColor="#fff" />
+            <stop offset="58%"  stopColor="#fff" />
+            <stop offset="100%" stopColor="#000" />
+          </radialGradient>
+          <mask id={`mask-${filterId}`}>
+            <rect x="0" y="0" width={size} height={size} fill={`url(#mg-${filterId})`} />
+          </mask>
+
+          {/* Base glow — translucent colored light, page shows through */}
+          <radialGradient id={`bg-${filterId}`} gradientUnits="userSpaceOnUse"
+            cx={half * 0.85} cy={half * 0.78} r={half * 1.2}>
+            <stop offset="0%"   stopColor={b0}      stopOpacity="0.65" />
+            <stop offset="45%"  stopColor={oc.base} stopOpacity="0.5" />
+            <stop offset="100%" stopColor={oc.base} stopOpacity="0.08" />
+          </radialGradient>
+
+          {/* Drifting color clouds — translucent, blend like light */}
           <radialGradient id={`b0-${filterId}`} gradientUnits="userSpaceOnUse"
             cx={half} cy={half} r={half}>
-            <stop offset="0%"  stopColor={b0} stopOpacity="0.95" />
-            <stop offset="55%" stopColor={b0} stopOpacity="0.35" />
+            <stop offset="0%"  stopColor={b0} stopOpacity="0.7" />
+            <stop offset="55%" stopColor={b0} stopOpacity="0.2" />
             <stop offset="100%" stopColor={b0} stopOpacity="0" />
           </radialGradient>
           <radialGradient id={`b1-${filterId}`} gradientUnits="userSpaceOnUse"
             cx={half} cy={half} r={half}>
-            <stop offset="0%"  stopColor={b1} stopOpacity="0.9" />
-            <stop offset="55%" stopColor={b1} stopOpacity="0.3" />
+            <stop offset="0%"  stopColor={b1} stopOpacity="0.6" />
+            <stop offset="55%" stopColor={b1} stopOpacity="0.18" />
             <stop offset="100%" stopColor={b1} stopOpacity="0" />
           </radialGradient>
           <radialGradient id={`b2-${filterId}`} gradientUnits="userSpaceOnUse"
             cx={half} cy={half} r={half}>
-            <stop offset="0%"  stopColor={b2} stopOpacity="0.85" />
-            <stop offset="55%" stopColor={b2} stopOpacity="0.3" />
+            <stop offset="0%"  stopColor={b2} stopOpacity="0.6" />
+            <stop offset="55%" stopColor={b2} stopOpacity="0.18" />
             <stop offset="100%" stopColor={b2} stopOpacity="0" />
           </radialGradient>
-          {/* Top-left soft sheen */}
+          {/* Top-left glassy sheen */}
           <radialGradient id={`hi-${filterId}`} gradientUnits="userSpaceOnUse"
-            cx={half * 0.6} cy={half * 0.5} r={half * 0.85}>
-            <stop offset="0%"   stopColor="white" stopOpacity="0.35" />
+            cx={half * 0.62} cy={half * 0.5} r={half * 0.8}>
+            <stop offset="0%"   stopColor="white" stopOpacity="0.45" />
             <stop offset="100%" stopColor="white" stopOpacity="0" />
-          </radialGradient>
-          {/* Bottom edge depth */}
-          <radialGradient id={`sh-${filterId}`} gradientUnits="userSpaceOnUse"
-            cx={half} cy={half} r={half}>
-            <stop offset="78%"  stopColor="#000" stopOpacity="0" />
-            <stop offset="100%" stopColor="#000" stopOpacity="0.28" />
           </radialGradient>
           {/* Soft blur so the color clouds melt together like fluid */}
           <filter id={`blur-${filterId}`} x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation={size * 0.04} />
+            <feGaussianBlur stdDeviation={size * 0.05} />
           </filter>
-          {/* Grayscale grain — the signature ElevenLabs texture */}
+          {/* Light grayscale grain for subtle texture */}
           <filter id={`gf-${filterId}`} x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
             <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3" seed="4" stitchTiles="stitch" result="noise" />
             <feColorMatrix type="saturate" values="0" in="noise" result="grey" />
@@ -421,26 +434,23 @@ function GrainOrb({ colorKey, size, scale, opacity = 1, amplitudeRef, speaker })
               <feFuncA type="linear" slope="0" intercept="1" />
             </feComponentTransfer>
           </filter>
-          <clipPath id={`clip-${filterId}`}>
-            <circle cx={half} cy={half} r={half} />
-          </clipPath>
         </defs>
 
-        <g clipPath={`url(#clip-${filterId})`}>
-          {/* Base tone */}
-          <rect x="0" y="0" width={size} height={size} fill={oc.base} />
+        {/* Everything fades out at the edge via the mask → translucent glow */}
+        <g mask={`url(#mask-${filterId})`}>
+          {/* Translucent base glow (no solid fill) */}
+          <rect x="0" y="0" width={size} height={size} fill={`url(#bg-${filterId})`} />
           {/* Flowing color clouds (cx/cy animated via RAF), blurred to blend */}
           <g filter={`url(#blur-${filterId})`}>
             <circle ref={el => blobRefs.current[0] = el} cx={half} cy={half} r={half * 0.62} fill={`url(#b0-${filterId})`} />
             <circle ref={el => blobRefs.current[1] = el} cx={half} cy={half} r={half * 0.58} fill={`url(#b1-${filterId})`} />
             <circle ref={el => blobRefs.current[2] = el} cx={half} cy={half} r={half * 0.55} fill={`url(#b2-${filterId})`} />
           </g>
-          {/* Sheen + depth */}
+          {/* Glassy sheen */}
           <rect x="0" y="0" width={size} height={size} fill={`url(#hi-${filterId})`} />
-          <rect x="0" y="0" width={size} height={size} fill={`url(#sh-${filterId})`} />
-          {/* Grain overlay */}
+          {/* Subtle grain */}
           <rect x="0" y="0" width={size} height={size} fill="#fff"
-            filter={`url(#gf-${filterId})`} style={{ mixBlendMode: 'overlay' }} opacity="0.5" />
+            filter={`url(#gf-${filterId})`} style={{ mixBlendMode: 'overlay' }} opacity="0.18" />
         </g>
       </svg>
     </div>
@@ -472,35 +482,14 @@ function ConversationVisualizer({ isConnected, colorKey, speaker, amplitudeRef, 
     }
 
     const animate = () => {
-      tickAudio();
+      tickAudio();                       // feeds amplitude → orb's internal flow
       const amp = amplitudeRef.current;
-      const t   = Date.now() / 1000;
 
-      let scale, haloScale, haloOpacity;
-
-      if (isUser) {
-        const punch = Math.min(0.24, amp * 0.3);
-        scale       = 1 + punch;
-        haloScale   = 1 + punch * 2;
-        haloOpacity = 0.4 + amp * 0.4;
-      } else if (isAI) {
-        const wave  = (Math.sin(t * 2.2) + 1) / 2;
-        scale       = 1 + wave * 0.1;
-        haloScale   = 1 + wave * 0.2;
-        haloOpacity = 0.28 + wave * 0.22;
-      } else {
-        const idle  = (Math.sin(t * 1.4) + 1) / 2;
-        scale       = 1 + idle * 0.025;
-        haloScale   = 1 + idle * 0.04;
-        haloOpacity = 0.14 + idle * 0.06;
-      }
-
-      if (orbWrapRef.current) {
-        orbWrapRef.current.style.transform = `scale(${scale.toFixed(4)})`;
-      }
+      // No size throbbing. Voice only gently brightens the surrounding glow.
+      const targetHalo = isSpeaking ? 0.22 + Math.min(0.2, amp * 0.25) : 0.12;
       if (haloRef.current) {
-        haloRef.current.style.transform = `scale(${haloScale.toFixed(4)})`;
-        haloRef.current.style.opacity   = haloOpacity.toFixed(4);
+        const cur = parseFloat(haloRef.current.style.opacity) || 0.12;
+        haloRef.current.style.opacity = (cur + (targetHalo - cur) * 0.06).toFixed(4);
       }
 
       rafRef.current = requestAnimationFrame(animate);
