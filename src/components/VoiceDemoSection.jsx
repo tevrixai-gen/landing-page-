@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Landmark, ShoppingCart, Wifi, Stethoscope,
-  Mic, MicOff, PhoneOff, Clock, MessageSquare, Zap, Volume2
+  Mic, PhoneOff, Clock, MessageSquare, Zap, Volume2
 } from 'lucide-react';
 
 /* ── Industry config ─────────────────────────────────────── */
@@ -135,35 +135,6 @@ const CALL_LIMIT = 60;
 
 /* ── Visualizer constants ────────────────────────────────── */
 const AUDIO_BINS = 32;
-const VIS = 200;
-const CTR = VIS / 2;
-const INNER_R = 24;
-const BLOB_POINTS = 8;
-
-/* ── Smooth blob path generator ──────────────────────────── */
-function blobPath(cx, cy, baseR, offsets, n) {
-  const pts = [];
-  for (let i = 0; i < n; i++) {
-    const a = (i / n) * Math.PI * 2 - Math.PI / 2;
-    const r = baseR + offsets[i];
-    pts.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]);
-  }
-  if (pts.length < 3) return '';
-  let d = `M ${pts[0][0].toFixed(2)} ${pts[0][1].toFixed(2)}`;
-  for (let i = 0; i < n; i++) {
-    const p0 = pts[(i - 1 + n) % n];
-    const p1 = pts[i];
-    const p2 = pts[(i + 1) % n];
-    const p3 = pts[(i + 2) % n];
-    const cp1x = p1[0] + (p2[0] - p0[0]) / 6;
-    const cp1y = p1[1] + (p2[1] - p0[1]) / 6;
-    const cp2x = p2[0] - (p3[0] - p1[0]) / 6;
-    const cp2y = p2[1] - (p3[1] - p1[1]) / 6;
-    d += ` C ${cp1x.toFixed(2)} ${cp1y.toFixed(2)}, ${cp2x.toFixed(2)} ${cp2y.toFixed(2)}, ${p2[0].toFixed(2)} ${p2[1].toFixed(2)}`;
-  }
-  d += ' Z';
-  return d;
-}
 
 /* ── Audio capture hook ──────────────────────────────────── */
 function useAudioCapture() {
@@ -269,207 +240,153 @@ function useAudioCapture() {
   return { speaker, smoothedRef, amplitudeRef, start, stop, tick, hasMicRef };
 }
 
-/* ── ElevenLabs-style orb color config per industry ───────
-   base = the orb's overall tone; blobs = soft color clouds that
-   drift around INSIDE the fixed circle (like the ElevenLabs orb).
-   Each blob: light highlight, deeper shade, and a shifted accent hue. */
-const ORB_COLORS = {
-  amber: {
-    base: '#f59e0b',
-    blobs: ['#fffbeb', '#ea580c', '#fde047'],
-    haloColor: 'rgba(251,191,36,0.55)',
-    shadowColor: 'rgba(249,115,22,0.35)',
-  },
-  violet: {
-    base: '#7c3aed',
-    blobs: ['#ede9fe', '#4c1d95', '#d946ef'],
-    haloColor: 'rgba(139,92,246,0.5)',
-    shadowColor: 'rgba(109,40,217,0.3)',
-  },
-  emerald: {
-    base: '#059669',
-    blobs: ['#d1fae5', '#065f46', '#22d3ee'],
-    haloColor: 'rgba(16,185,129,0.5)',
-    shadowColor: 'rgba(6,95,70,0.3)',
-  },
-  rose: {
-    base: '#e11d48',
-    blobs: ['#ffe4e6', '#9f1239', '#fb923c'],
-    haloColor: 'rgba(244,63,94,0.5)',
-    shadowColor: 'rgba(159,18,57,0.3)',
-  },
-};
 
-/* ── Unique filter IDs to avoid DOM conflicts ────────────── */
-let _filterId = 0;
-const nextFilterId = () => `grain-${++_filterId}`;
+/* ── Linear waveform bars visualizer ─────────────────────────
+   Vertical equalizer bars that bounce per-frequency-bin.
+   Idle: gentle sine-wave breathing. Speaking: bars jump with
+   real audio data. Mirrored (bars go up and down from center)
+   for a balanced, modern look. */
+const BAR_COUNT = 32;
+const BAR_GAP = 2.5;
 
-/* ── Orb — ElevenLabs-style: fixed circle, color blobs flow inside ──
-   Three soft radial-gradient "color clouds" drift around inside a
-   circular clip on lissajous paths. When the user/AI speaks they drift
-   faster and wider; idle is a slow gentle swirl. A grayscale grain
-   overlay gives the signature ElevenLabs texture. */
-function GrainOrb({ colorKey, size, scale, opacity = 1, amplitudeRef, speaker }) {
-  const oc = ORB_COLORS[colorKey];
-  const filterId = useRef(nextFilterId()).current;
-  const svgRef = useRef(null);
-  const blobRefs = useRef([null, null, null]);
+function VoiceOrb({ colorKey, size, scale, opacity = 1, amplitudeRef, smoothedRef, speaker }) {
+  const sc = SVG_COLORS[colorKey];
+  const canvasRef = useRef(null);
   const rafRef = useRef(null);
-  const ampSmoothRef = useRef(0);
+  const displayBars = useRef(new Float32Array(BAR_COUNT).fill(0));
 
-  const half = size / 2;
-  const [b0, b1, b2] = oc.blobs;
-
-  // Each blob: home position (fraction of size), motion freq, phase, radius.
-  const blobCfg = useRef([
-    { hx: 0.40, hy: 0.36, fx: 0.50, fy: 0.37, ph: 0.0, r: 0.62 },
-    { hx: 0.62, hy: 0.64, fx: 0.41, fy: 0.55, ph: 2.1, r: 0.58 },
-    { hx: 0.52, hy: 0.50, fx: 0.63, fy: 0.45, ph: 4.0, r: 0.55 },
-  ]).current;
+  const width = size;
+  const height = size;
 
   useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const totalGap = BAR_GAP * (BAR_COUNT - 1);
+    const barW = Math.max(3, (width - totalGap) / BAR_COUNT);
+    const midY = height / 2;
+    const maxBarH = height * 0.30;   // cap at 30% of canvas height (subtle)
+    const mid = (BAR_COUNT - 1) / 2;
+
     const animate = () => {
       const t = Date.now() / 1000;
-      const isSpeaking = speaker === 'user' || speaker === 'ai';
+      const isUser = speaker === 'user';
+      const isAI   = speaker === 'ai';
+      const bins = smoothedRef?.current;
 
-      // Smooth the amplitude so motion eases in/out (slow easing = calm)
-      const targetAmp = isSpeaking ? (amplitudeRef?.current ?? 0.3) : 0;
-      ampSmoothRef.current += (targetAmp - ampSmoothRef.current) * 0.05;
-      const amp = ampSmoothRef.current;
+      // AI audio comes from the speaker (not mic), so synthesise a
+      // calm speech-cadence envelope that drives the bars.
+      const aiEnv = isAI
+        ? Math.max(0,
+            0.38
+            + Math.sin(t * 5.0)        * 0.18
+            + Math.sin(t * 2.8 + 1.7)  * 0.10
+            + Math.sin(t * 9.0)        * 0.04
+          )
+        : 0;
 
-      // Gentle ambient swirl; speaking adds only a subtle lift in pace/range.
-      const speed  = 0.7 + amp * 0.9;
-      const driftR = (0.08 + amp * 0.06) * size;   // how far blob centers roam
+      ctx.clearRect(0, 0, width, height);
 
-      blobRefs.current.forEach((el, i) => {
-        if (!el) return;
-        const c = blobCfg[i];
-        const cx = c.hx * size + Math.sin(t * c.fx * speed + c.ph) * driftR;
-        const cy = c.hy * size + Math.cos(t * c.fy * speed + c.ph * 1.3) * driftR;
-        el.setAttribute('cx', cx.toFixed(2));
-        el.setAttribute('cy', cy.toFixed(2));
-        // Blobs swell very slightly with voice
-        el.setAttribute('r', ((c.r + amp * 0.05) * half).toFixed(2));
-      });
+      const totalW = BAR_COUNT * barW + (BAR_COUNT - 1) * BAR_GAP;
+      const offsetX = (width - totalW) / 2;
+
+      for (let i = 0; i < BAR_COUNT; i++) {
+        const dist = Math.abs(i - mid) / mid;
+
+        // Centre-out: low freqs (loudest) at the middle, highs at edges.
+        const binIdx = Math.min(AUDIO_BINS - 1, Math.floor(dist * AUDIO_BINS));
+        const freq = bins ? bins[binIdx] : 0;
+
+        // Bell curve: centre bars grow tallest.
+        const bell = 1 - dist * dist * 0.55;
+
+        // Gentle idle ripple radiating from the centre.
+        const idleH = (
+          (Math.sin(t * 1.8 - dist * 2.5) * 0.5 + 0.5) * 0.18
+          + (Math.sin(t * 0.9 + i * 0.55) * 0.5 + 0.5) * 0.08
+          + 0.07
+        ) * bell;
+
+        let voiceH = 0;
+        if (isUser) {
+          // Real mic — moderate amplification so it doesn't spike.
+          const amp = Math.min(1, amplitudeRef?.current ?? 0);
+          voiceH = freq * (0.65 + amp * 0.6) * bell;
+        } else if (isAI) {
+          // Synthetic ripple travelling outward from centre.
+          const ripple  = Math.sin(t * 7 - dist * 4.0) * 0.5 + 0.5;
+          const flicker = Math.sin(t * 15 + i * 1.1)   * 0.5 + 0.5;
+          voiceH = aiEnv * (ripple * 0.65 + flicker * 0.35) * 0.75 * bell;
+        }
+
+        const targetH = Math.min(1, idleH + voiceH);
+
+        // Smooth easing — speaking slightly snappier but not twitchy.
+        const ease = (isUser || isAI) ? 0.14 : 0.10;
+        displayBars.current[i] += (targetH - displayBars.current[i]) * ease;
+        const h = Math.max(2, displayBars.current[i] * maxBarH);
+
+        const x = offsetX + i * (barW + BAR_GAP);
+        const radius = barW / 2;
+
+        const grad = ctx.createLinearGradient(x, midY - h, x, midY + h);
+        const intensity = 0.6 + displayBars.current[i] * 0.4;
+        grad.addColorStop(0, sc.c2 + hexAlpha(intensity * 0.7));
+        grad.addColorStop(0.35, sc.c1 + hexAlpha(intensity));
+        grad.addColorStop(0.5, sc.c1 + hexAlpha(Math.min(1, intensity * 1.1)));
+        grad.addColorStop(0.65, sc.c1 + hexAlpha(intensity));
+        grad.addColorStop(1, sc.c2 + hexAlpha(intensity * 0.7));
+
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.roundRect(x, midY - h, barW, h * 2, radius);
+        ctx.fill();
+      }
 
       rafRef.current = requestAnimationFrame(animate);
     };
+
     rafRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(rafRef.current);
-  }, [amplitudeRef, speaker, size, half, blobCfg]);
+  }, [amplitudeRef, smoothedRef, speaker, width, height, colorKey]);
 
   return (
     <div
       style={{
-        width: size, height: size,
+        width, height,
         transform: `scale(${scale})`,
         willChange: 'transform',
         position: 'relative',
         flexShrink: 0,
-        // soft colored glow — no heavy drop shadow, so it reads as light
-        filter: `drop-shadow(0 0 ${size * 0.18}px ${oc.haloColor}) drop-shadow(0 8px 26px ${oc.shadowColor})`,
         opacity,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
       }}
     >
-      <svg
-        ref={svgRef}
-        width={size} height={size}
-        viewBox={`0 0 ${size} ${size}`}
-        style={{ position: 'absolute', inset: 0 }}
-      >
-        <defs>
-          {/* Edge-fade mask — orb melts softly into the page, no hard rim */}
-          <radialGradient id={`mg-${filterId}`} gradientUnits="userSpaceOnUse"
-            cx={half} cy={half} r={half}>
-            <stop offset="0%"   stopColor="#fff" />
-            <stop offset="58%"  stopColor="#fff" />
-            <stop offset="100%" stopColor="#000" />
-          </radialGradient>
-          <mask id={`mask-${filterId}`}>
-            <rect x="0" y="0" width={size} height={size} fill={`url(#mg-${filterId})`} />
-          </mask>
-
-          {/* Base glow — translucent colored light, page shows through */}
-          <radialGradient id={`bg-${filterId}`} gradientUnits="userSpaceOnUse"
-            cx={half * 0.85} cy={half * 0.78} r={half * 1.2}>
-            <stop offset="0%"   stopColor={b0}      stopOpacity="0.65" />
-            <stop offset="45%"  stopColor={oc.base} stopOpacity="0.5" />
-            <stop offset="100%" stopColor={oc.base} stopOpacity="0.08" />
-          </radialGradient>
-
-          {/* Drifting color clouds — translucent, blend like light */}
-          <radialGradient id={`b0-${filterId}`} gradientUnits="userSpaceOnUse"
-            cx={half} cy={half} r={half}>
-            <stop offset="0%"  stopColor={b0} stopOpacity="0.7" />
-            <stop offset="55%" stopColor={b0} stopOpacity="0.2" />
-            <stop offset="100%" stopColor={b0} stopOpacity="0" />
-          </radialGradient>
-          <radialGradient id={`b1-${filterId}`} gradientUnits="userSpaceOnUse"
-            cx={half} cy={half} r={half}>
-            <stop offset="0%"  stopColor={b1} stopOpacity="0.6" />
-            <stop offset="55%" stopColor={b1} stopOpacity="0.18" />
-            <stop offset="100%" stopColor={b1} stopOpacity="0" />
-          </radialGradient>
-          <radialGradient id={`b2-${filterId}`} gradientUnits="userSpaceOnUse"
-            cx={half} cy={half} r={half}>
-            <stop offset="0%"  stopColor={b2} stopOpacity="0.6" />
-            <stop offset="55%" stopColor={b2} stopOpacity="0.18" />
-            <stop offset="100%" stopColor={b2} stopOpacity="0" />
-          </radialGradient>
-          {/* Top-left glassy sheen */}
-          <radialGradient id={`hi-${filterId}`} gradientUnits="userSpaceOnUse"
-            cx={half * 0.62} cy={half * 0.5} r={half * 0.8}>
-            <stop offset="0%"   stopColor="white" stopOpacity="0.45" />
-            <stop offset="100%" stopColor="white" stopOpacity="0" />
-          </radialGradient>
-          {/* Soft blur so the color clouds melt together like fluid */}
-          <filter id={`blur-${filterId}`} x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation={size * 0.05} />
-          </filter>
-          {/* Light grayscale grain for subtle texture */}
-          <filter id={`gf-${filterId}`} x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
-            <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3" seed="4" stitchTiles="stitch" result="noise" />
-            <feColorMatrix type="saturate" values="0" in="noise" result="grey" />
-            <feComponentTransfer in="grey" result="solid">
-              <feFuncA type="linear" slope="0" intercept="1" />
-            </feComponentTransfer>
-          </filter>
-        </defs>
-
-        {/* Everything fades out at the edge via the mask → translucent glow */}
-        <g mask={`url(#mask-${filterId})`}>
-          {/* Translucent base glow (no solid fill) */}
-          <rect x="0" y="0" width={size} height={size} fill={`url(#bg-${filterId})`} />
-          {/* Flowing color clouds (cx/cy animated via RAF), blurred to blend */}
-          <g filter={`url(#blur-${filterId})`}>
-            <circle ref={el => blobRefs.current[0] = el} cx={half} cy={half} r={half * 0.62} fill={`url(#b0-${filterId})`} />
-            <circle ref={el => blobRefs.current[1] = el} cx={half} cy={half} r={half * 0.58} fill={`url(#b1-${filterId})`} />
-            <circle ref={el => blobRefs.current[2] = el} cx={half} cy={half} r={half * 0.55} fill={`url(#b2-${filterId})`} />
-          </g>
-          {/* Glassy sheen */}
-          <rect x="0" y="0" width={size} height={size} fill={`url(#hi-${filterId})`} />
-          {/* Subtle grain */}
-          <rect x="0" y="0" width={size} height={size} fill="#fff"
-            filter={`url(#gf-${filterId})`} style={{ mixBlendMode: 'overlay' }} opacity="0.18" />
-        </g>
-      </svg>
+      <canvas
+        ref={canvasRef}
+        style={{ width, height }}
+      />
     </div>
   );
 }
 
-/* ── Conversation Visualizer — ElevenLabs style ──────────── */
-function ConversationVisualizer({ isConnected, colorKey, speaker, amplitudeRef, tickAudio, timeLeft, agentName }) {
-  const orbWrapRef = useRef(null);
-  const haloRef    = useRef(null);
-  const rafRef     = useRef(null);
+function hexAlpha(a) {
+  return Math.round(Math.min(1, Math.max(0, a)) * 255).toString(16).padStart(2, '0');
+}
+
+/* ── Conversation Visualizer ────────────────────────────────── */
+function ConversationVisualizer({ isConnected, colorKey, speaker, amplitudeRef, smoothedRef, tickAudio, timeLeft, agentName }) {
+  const rafRef = useRef(null);
 
   const sc       = SVG_COLORS[colorKey];
-  const oc       = ORB_COLORS[colorKey];
   const progress = timeLeft / CALL_LIMIT;
-  const SIZE     = 280;
-  const ORB_SIZE = 180;
-  const RING_R   = (SIZE - 10) / 2;
-  const CIRC     = 2 * Math.PI * RING_R;
 
   const isUser     = speaker === 'user';
   const isAI       = speaker === 'ai';
@@ -480,67 +397,34 @@ function ConversationVisualizer({ isConnected, colorKey, speaker, amplitudeRef, 
       cancelAnimationFrame(rafRef.current);
       return;
     }
-
     const animate = () => {
-      tickAudio();                       // feeds amplitude → orb's internal flow
-      const amp = amplitudeRef.current;
-
-      // No size throbbing. Voice only gently brightens the surrounding glow.
-      const targetHalo = isSpeaking ? 0.22 + Math.min(0.2, amp * 0.25) : 0.12;
-      if (haloRef.current) {
-        const cur = parseFloat(haloRef.current.style.opacity) || 0.12;
-        haloRef.current.style.opacity = (cur + (targetHalo - cur) * 0.06).toFixed(4);
-      }
-
+      tickAudio();
       rafRef.current = requestAnimationFrame(animate);
     };
-
     rafRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(rafRef.current);
-  }, [isConnected, isUser, isAI, amplitudeRef, tickAudio]);
+  }, [isConnected, tickAudio]);
+
+  const BAR_W = 240;
+  const PROG_H = 3;
 
   return (
-    <div className="flex flex-col items-center gap-5">
+    <div className="flex flex-col items-center gap-4">
 
-      {/* Canvas */}
-      <div className="relative flex items-center justify-center" style={{ width: SIZE, height: SIZE }}>
+      {/* Waveform bars */}
+      <VoiceOrb colorKey={colorKey} size={BAR_W} scale={1} amplitudeRef={amplitudeRef} smoothedRef={smoothedRef} speaker={speaker} key={colorKey} />
 
-        {/* Countdown ring */}
-        <svg width={SIZE} height={SIZE} className="absolute inset-0 -rotate-90 pointer-events-none">
-          <defs>
-            <linearGradient id={`pg-${colorKey}`} x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%"   stopColor={sc.c1} />
-              <stop offset="100%" stopColor={sc.c2} />
-            </linearGradient>
-          </defs>
-          <circle cx={SIZE/2} cy={SIZE/2} r={RING_R} fill="none" stroke="rgba(0,0,0,0.06)" strokeWidth="3" />
-          <circle cx={SIZE/2} cy={SIZE/2} r={RING_R} fill="none"
-            stroke={`url(#pg-${colorKey})`} strokeWidth="3" strokeLinecap="round"
-            strokeDasharray={CIRC} strokeDashoffset={CIRC - progress * CIRC}
-            style={{ transition: 'stroke-dashoffset 0.6s ease' }}
-          />
-        </svg>
-
-        {/* Outer glow halo */}
+      {/* Progress bar (replaces circular ring) */}
+      <div style={{ width: BAR_W, height: PROG_H, borderRadius: PROG_H, background: 'rgba(0,0,0,0.06)', overflow: 'hidden' }}>
         <div
-          ref={haloRef}
-          className="absolute rounded-full pointer-events-none"
           style={{
-            width: ORB_SIZE + 80, height: ORB_SIZE + 80,
-            background: `radial-gradient(circle, ${oc.haloColor} 0%, transparent 70%)`,
-            filter: 'blur(28px)',
-            opacity: 0.18,
-            willChange: 'transform, opacity',
+            width: `${progress * 100}%`,
+            height: '100%',
+            borderRadius: PROG_H,
+            background: `linear-gradient(90deg, ${sc.c1}, ${sc.c2})`,
+            transition: 'width 0.6s ease',
           }}
         />
-
-        {/* Orb wrapper (scale driven by RAF) */}
-        <div
-          ref={orbWrapRef}
-          style={{ willChange: 'transform' }}
-        >
-          <GrainOrb colorKey={colorKey} size={ORB_SIZE} scale={1} amplitudeRef={amplitudeRef} speaker={speaker} />
-        </div>
       </div>
 
       {/* Speaker label */}
@@ -629,7 +513,7 @@ export default function VoiceDemoSection() {
   const timerRef  = useRef(null);
   const cleanupFn = useRef(null);
 
-  const { speaker, amplitudeRef, start: startAudio, stop: stopAudio, tick: tickAudio } = useAudioCapture();
+  const { speaker, amplitudeRef, smoothedRef, start: startAudio, stop: stopAudio, tick: tickAudio } = useAudioCapture();
 
   const industry = INDUSTRIES.find(i => i.id === activeId);
   const colors   = COLOR_MAP[industry.color];
@@ -919,6 +803,7 @@ export default function VoiceDemoSection() {
                           accentClass={colors.accent}
                           speaker={speaker}
                           amplitudeRef={amplitudeRef}
+                          smoothedRef={smoothedRef}
                           tickAudio={tickAudio}
                           timeLeft={timeLeft}
                           agentName={industry.agent}
@@ -963,13 +848,13 @@ export default function VoiceDemoSection() {
                         exit={{ opacity: 0, scale: 0.9 }}
                         className="flex flex-col items-center gap-5"
                       >
-                        {/* Idle orb — same GrainOrb, gentle breathing via CSS */}
-                        <GrainOrb
+                        <VoiceOrb
                           colorKey={industry.color}
                           size={175}
                           scale={1}
                           opacity={isFailed ? 0.45 : 1}
                           amplitudeRef={amplitudeRef}
+                          smoothedRef={smoothedRef}
                           speaker="idle"
                         />
                         <div className="text-[14px] text-slate-500 text-center font-medium tracking-tight">
