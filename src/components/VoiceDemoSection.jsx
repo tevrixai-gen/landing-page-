@@ -269,39 +269,34 @@ function useAudioCapture() {
   return { speaker, smoothedRef, amplitudeRef, start, stop, tick, hasMicRef };
 }
 
-/* ── ElevenLabs-style orb color config per industry ─────── */
+/* ── ElevenLabs-style orb color config per industry ───────
+   base = the orb's overall tone; blobs = soft color clouds that
+   drift around INSIDE the fixed circle (like the ElevenLabs orb).
+   Each blob: light highlight, deeper shade, and a shifted accent hue. */
 const ORB_COLORS = {
   amber: {
-    // warm nebula — coral center bleeding to deep amber-red
-    stops: ['#fff0c0', '#fbbf24', '#f97316', '#b91c1c', '#431407'],
-    cx: ['38%','62%','50%'],
-    cy: ['28%','70%','45%'],
+    base: '#f59e0b',
+    blobs: ['#fffbeb', '#ea580c', '#fde047'],
     haloColor: 'rgba(251,191,36,0.55)',
-    shadowColor: 'rgba(249,115,22,0.4)',
+    shadowColor: 'rgba(249,115,22,0.35)',
   },
   violet: {
-    // lavender nebula — light pink-lavender center to deep violet
-    stops: ['#f3e8ff', '#c084fc', '#7c3aed', '#4c1d95', '#1e1b4b'],
-    cx: ['35%','68%','50%'],
-    cy: ['25%','72%','50%'],
+    base: '#7c3aed',
+    blobs: ['#ede9fe', '#4c1d95', '#d946ef'],
     haloColor: 'rgba(139,92,246,0.5)',
-    shadowColor: 'rgba(109,40,217,0.35)',
+    shadowColor: 'rgba(109,40,217,0.3)',
   },
   emerald: {
-    // earthy green nebula — sage center to deep forest
-    stops: ['#d1fae5', '#6ee7b7', '#059669', '#064e3b', '#022c22'],
-    cx: ['40%','60%','50%'],
-    cy: ['30%','68%','48%'],
+    base: '#059669',
+    blobs: ['#d1fae5', '#065f46', '#22d3ee'],
     haloColor: 'rgba(16,185,129,0.5)',
-    shadowColor: 'rgba(6,95,70,0.35)',
+    shadowColor: 'rgba(6,95,70,0.3)',
   },
   rose: {
-    // warm pink nebula — blush center to deep rose-crimson
-    stops: ['#ffe4e6', '#fda4af', '#f43f5e', '#9f1239', '#4c0519'],
-    cx: ['36%','64%','50%'],
-    cy: ['27%','72%','47%'],
+    base: '#e11d48',
+    blobs: ['#ffe4e6', '#9f1239', '#fb923c'],
     haloColor: 'rgba(244,63,94,0.5)',
-    shadowColor: 'rgba(159,18,57,0.35)',
+    shadowColor: 'rgba(159,18,57,0.3)',
   },
 };
 
@@ -309,74 +304,144 @@ const ORB_COLORS = {
 let _filterId = 0;
 const nextFilterId = () => `grain-${++_filterId}`;
 
-/* ── Orb — the actual ElevenLabs-style blob ──────────────── */
-function GrainOrb({ colorKey, size, scale, opacity = 1 }) {
+/* ── Orb — ElevenLabs-style: fixed circle, color blobs flow inside ──
+   Three soft radial-gradient "color clouds" drift around inside a
+   circular clip on lissajous paths. When the user/AI speaks they drift
+   faster and wider; idle is a slow gentle swirl. A grayscale grain
+   overlay gives the signature ElevenLabs texture. */
+function GrainOrb({ colorKey, size, scale, opacity = 1, amplitudeRef, speaker }) {
   const oc = ORB_COLORS[colorKey];
   const filterId = useRef(nextFilterId()).current;
-  const [s0, s1, s2, s3, s4] = oc.stops;
-  const [cx0, cx1, cx2] = oc.cx;
-  const [cy0, cy1, cy2] = oc.cy;
+  const svgRef = useRef(null);
+  const blobRefs = useRef([null, null, null]);
+  const rafRef = useRef(null);
+  const ampSmoothRef = useRef(0);
+
   const half = size / 2;
+  const [b0, b1, b2] = oc.blobs;
+
+  // Each blob: home position (fraction of size), motion freq, phase, radius.
+  const blobCfg = useRef([
+    { hx: 0.40, hy: 0.36, fx: 0.50, fy: 0.37, ph: 0.0, r: 0.62 },
+    { hx: 0.62, hy: 0.64, fx: 0.41, fy: 0.55, ph: 2.1, r: 0.58 },
+    { hx: 0.52, hy: 0.50, fx: 0.63, fy: 0.45, ph: 4.0, r: 0.55 },
+  ]).current;
+
+  useEffect(() => {
+    const animate = () => {
+      const t = Date.now() / 1000;
+      const isSpeaking = speaker === 'user' || speaker === 'ai';
+
+      // Smooth the amplitude so motion eases in/out
+      const targetAmp = isSpeaking ? (amplitudeRef?.current ?? 0.4) : 0;
+      ampSmoothRef.current += (targetAmp - ampSmoothRef.current) * 0.08;
+      const amp = ampSmoothRef.current;
+
+      // Idle: slow gentle drift. Speaking: faster + wider drift.
+      const speed  = 1 + amp * 2.6;
+      const driftR = (0.10 + amp * 0.16) * size;   // how far blob centers roam
+
+      blobRefs.current.forEach((el, i) => {
+        if (!el) return;
+        const c = blobCfg[i];
+        const cx = c.hx * size + Math.sin(t * c.fx * speed + c.ph) * driftR;
+        const cy = c.hy * size + Math.cos(t * c.fy * speed + c.ph * 1.3) * driftR;
+        el.setAttribute('cx', cx.toFixed(2));
+        el.setAttribute('cy', cy.toFixed(2));
+        // Blobs swell slightly with voice
+        el.setAttribute('r', ((c.r + amp * 0.12) * half).toFixed(2));
+      });
+
+      rafRef.current = requestAnimationFrame(animate);
+    };
+    rafRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [amplitudeRef, speaker, size, half, blobCfg]);
 
   return (
     <div
       style={{
         width: size, height: size,
-        borderRadius: '50%',
         transform: `scale(${scale})`,
-        transition: 'transform 0.1s ease-out',
         willChange: 'transform',
         position: 'relative',
-        overflow: 'hidden',
         flexShrink: 0,
-        boxShadow: `0 24px 70px ${oc.shadowColor}, 0 8px 30px ${oc.shadowColor}`,
+        borderRadius: '50%',
+        filter: `drop-shadow(0 20px 50px ${oc.shadowColor}) drop-shadow(0 8px 24px ${oc.shadowColor})`,
         opacity,
       }}
     >
-      {/* Multi-layer atmospheric gradient via SVG — most accurate to ElevenLabs */}
       <svg
+        ref={svgRef}
         width={size} height={size}
-        style={{ position: 'absolute', inset: 0, borderRadius: '50%' }}
+        viewBox={`0 0 ${size} ${size}`}
+        style={{ position: 'absolute', inset: 0 }}
       >
         <defs>
-          {/* Main atmospheric gradient */}
-          <radialGradient id={`g0-${filterId}`} cx={cx0} cy={cy0} r="65%" gradientUnits="userSpaceOnUse"
-            x1="0" y1="0" x2={size} y2={size}>
-            <stop offset="0%"   stopColor={s0} />
-            <stop offset="28%"  stopColor={s1} />
-            <stop offset="60%"  stopColor={s2} />
-            <stop offset="85%"  stopColor={s3} />
-            <stop offset="100%" stopColor={s4} />
+          {/* Drifting color clouds — fade to transparent so they blend like fluid */}
+          <radialGradient id={`b0-${filterId}`} gradientUnits="userSpaceOnUse"
+            cx={half} cy={half} r={half}>
+            <stop offset="0%"  stopColor={b0} stopOpacity="0.95" />
+            <stop offset="55%" stopColor={b0} stopOpacity="0.35" />
+            <stop offset="100%" stopColor={b0} stopOpacity="0" />
           </radialGradient>
-          {/* Second gradient from opposite corner for depth */}
-          <radialGradient id={`g1-${filterId}`} cx={cx1} cy={cy1} r="55%" gradientUnits="userSpaceOnUse"
-            x1="0" y1="0" x2={size} y2={size}>
-            <stop offset="0%"   stopColor={s4} stopOpacity="0.7" />
-            <stop offset="50%"  stopColor={s3} stopOpacity="0.4" />
-            <stop offset="100%" stopColor={s2} stopOpacity="0" />
+          <radialGradient id={`b1-${filterId}`} gradientUnits="userSpaceOnUse"
+            cx={half} cy={half} r={half}>
+            <stop offset="0%"  stopColor={b1} stopOpacity="0.9" />
+            <stop offset="55%" stopColor={b1} stopOpacity="0.3" />
+            <stop offset="100%" stopColor={b1} stopOpacity="0" />
           </radialGradient>
-          {/* Grain filter */}
-          <filter id={`gf-${filterId}`} x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
-            <feTurbulence type="fractalNoise" baseFrequency="0.68" numOctaves="4" seed="2" stitchTiles="stitch" result="noise" />
-            <feColorMatrix type="saturate" values="0" in="noise" result="greyNoise" />
-            <feBlend in="SourceGraphic" in2="greyNoise" mode="overlay" result="blended" />
-            <feComposite in="blended" in2="SourceGraphic" operator="in" />
+          <radialGradient id={`b2-${filterId}`} gradientUnits="userSpaceOnUse"
+            cx={half} cy={half} r={half}>
+            <stop offset="0%"  stopColor={b2} stopOpacity="0.85" />
+            <stop offset="55%" stopColor={b2} stopOpacity="0.3" />
+            <stop offset="100%" stopColor={b2} stopOpacity="0" />
+          </radialGradient>
+          {/* Top-left soft sheen */}
+          <radialGradient id={`hi-${filterId}`} gradientUnits="userSpaceOnUse"
+            cx={half * 0.6} cy={half * 0.5} r={half * 0.85}>
+            <stop offset="0%"   stopColor="white" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="white" stopOpacity="0" />
+          </radialGradient>
+          {/* Bottom edge depth */}
+          <radialGradient id={`sh-${filterId}`} gradientUnits="userSpaceOnUse"
+            cx={half} cy={half} r={half}>
+            <stop offset="78%"  stopColor="#000" stopOpacity="0" />
+            <stop offset="100%" stopColor="#000" stopOpacity="0.28" />
+          </radialGradient>
+          {/* Soft blur so the color clouds melt together like fluid */}
+          <filter id={`blur-${filterId}`} x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation={size * 0.04} />
           </filter>
+          {/* Grayscale grain — the signature ElevenLabs texture */}
+          <filter id={`gf-${filterId}`} x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3" seed="4" stitchTiles="stitch" result="noise" />
+            <feColorMatrix type="saturate" values="0" in="noise" result="grey" />
+            <feComponentTransfer in="grey" result="solid">
+              <feFuncA type="linear" slope="0" intercept="1" />
+            </feComponentTransfer>
+          </filter>
+          <clipPath id={`clip-${filterId}`}>
+            <circle cx={half} cy={half} r={half} />
+          </clipPath>
         </defs>
 
-        {/* Base layer — main gradient */}
-        <circle cx={half} cy={half} r={half} fill={`url(#g0-${filterId})`} />
-        {/* Depth layer — darkens edges from opposite side */}
-        <circle cx={half} cy={half} r={half} fill={`url(#g1-${filterId})`} />
-        {/* Grain overlay — the key to the ElevenLabs look */}
-        <circle cx={half} cy={half} r={half} fill={`url(#g0-${filterId})`}
-          filter={`url(#gf-${filterId})`} opacity="1" />
-        {/* Top-left soft highlight */}
-        <radialGradient id={`hi-${filterId}`} cx="32%" cy="26%" r="40%">
-          <stop offset="0%"   stopColor="white" stopOpacity="0.32" />
-          <stop offset="100%" stopColor="white" stopOpacity="0" />
-        </radialGradient>
-        <circle cx={half} cy={half} r={half} fill={`url(#hi-${filterId})`} />
+        <g clipPath={`url(#clip-${filterId})`}>
+          {/* Base tone */}
+          <rect x="0" y="0" width={size} height={size} fill={oc.base} />
+          {/* Flowing color clouds (cx/cy animated via RAF), blurred to blend */}
+          <g filter={`url(#blur-${filterId})`}>
+            <circle ref={el => blobRefs.current[0] = el} cx={half} cy={half} r={half * 0.62} fill={`url(#b0-${filterId})`} />
+            <circle ref={el => blobRefs.current[1] = el} cx={half} cy={half} r={half * 0.58} fill={`url(#b1-${filterId})`} />
+            <circle ref={el => blobRefs.current[2] = el} cx={half} cy={half} r={half * 0.55} fill={`url(#b2-${filterId})`} />
+          </g>
+          {/* Sheen + depth */}
+          <rect x="0" y="0" width={size} height={size} fill={`url(#hi-${filterId})`} />
+          <rect x="0" y="0" width={size} height={size} fill={`url(#sh-${filterId})`} />
+          {/* Grain overlay */}
+          <rect x="0" y="0" width={size} height={size} fill="#fff"
+            filter={`url(#gf-${filterId})`} style={{ mixBlendMode: 'overlay' }} opacity="0.5" />
+        </g>
       </svg>
     </div>
   );
@@ -485,7 +550,7 @@ function ConversationVisualizer({ isConnected, colorKey, speaker, amplitudeRef, 
           ref={orbWrapRef}
           style={{ willChange: 'transform' }}
         >
-          <GrainOrb colorKey={colorKey} size={ORB_SIZE} scale={1} />
+          <GrainOrb colorKey={colorKey} size={ORB_SIZE} scale={1} amplitudeRef={amplitudeRef} speaker={speaker} />
         </div>
       </div>
 
@@ -910,19 +975,14 @@ export default function VoiceDemoSection() {
                         className="flex flex-col items-center gap-5"
                       >
                         {/* Idle orb — same GrainOrb, gentle breathing via CSS */}
-                        <div
-                          style={{
-                            animation: 'idle-breathe 4s ease-in-out infinite',
-                            filter: `drop-shadow(0 16px 40px ${ORB_COLORS[industry.color].shadowColor})`,
-                          }}
-                        >
-                          <GrainOrb
-                            colorKey={industry.color}
-                            size={175}
-                            scale={1}
-                            opacity={isFailed ? 0.45 : 1}
-                          />
-                        </div>
+                        <GrainOrb
+                          colorKey={industry.color}
+                          size={175}
+                          scale={1}
+                          opacity={isFailed ? 0.45 : 1}
+                          amplitudeRef={amplitudeRef}
+                          speaker="idle"
+                        />
                         <div className="text-[14px] text-slate-500 text-center font-medium tracking-tight">
                           {isFailed ? 'Connection failed — retry' : 'Ready to talk'}
                         </div>
