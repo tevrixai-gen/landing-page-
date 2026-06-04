@@ -269,49 +269,130 @@ function useAudioCapture() {
   return { speaker, smoothedRef, amplitudeRef, start, stop, tick, hasMicRef };
 }
 
-/* ── ElevenLabs-style orb gradients per industry ────────── */
-const ORB_GRADIENTS = {
+/* ── ElevenLabs-style orb color config per industry ─────── */
+const ORB_COLORS = {
   amber: {
-    base:   'radial-gradient(ellipse at 35% 30%, #fbbf24 0%, #f97316 40%, #dc2626 75%, #92400e 100%)',
-    halo:   '#f97316',
-    user:   'radial-gradient(ellipse at 40% 25%, #fde68a 0%, #fb923c 35%, #ef4444 70%, #7c2d12 100%)',
-    ai:     'radial-gradient(ellipse at 30% 40%, #fcd34d 0%, #f59e0b 40%, #b45309 80%, #78350f 100%)',
+    // warm nebula — coral center bleeding to deep amber-red
+    stops: ['#fff0c0', '#fbbf24', '#f97316', '#b91c1c', '#431407'],
+    cx: ['38%','62%','50%'],
+    cy: ['28%','70%','45%'],
+    haloColor: 'rgba(251,191,36,0.55)',
+    shadowColor: 'rgba(249,115,22,0.4)',
   },
   violet: {
-    base:   'radial-gradient(ellipse at 35% 30%, #c4b5fd 0%, #8b5cf6 40%, #6d28d9 75%, #2e1065 100%)',
-    halo:   '#8b5cf6',
-    user:   'radial-gradient(ellipse at 40% 25%, #e9d5ff 0%, #a78bfa 35%, #7c3aed 70%, #3b0764 100%)',
-    ai:     'radial-gradient(ellipse at 30% 40%, #ddd6fe 0%, #8b5cf6 40%, #5b21b6 80%, #1e1b4b 100%)',
+    // lavender nebula — light pink-lavender center to deep violet
+    stops: ['#f3e8ff', '#c084fc', '#7c3aed', '#4c1d95', '#1e1b4b'],
+    cx: ['35%','68%','50%'],
+    cy: ['25%','72%','50%'],
+    haloColor: 'rgba(139,92,246,0.5)',
+    shadowColor: 'rgba(109,40,217,0.35)',
   },
   emerald: {
-    base:   'radial-gradient(ellipse at 35% 30%, #6ee7b7 0%, #10b981 40%, #065f46 75%, #022c22 100%)',
-    halo:   '#10b981',
-    user:   'radial-gradient(ellipse at 40% 25%, #a7f3d0 0%, #34d399 35%, #059669 70%, #064e3b 100%)',
-    ai:     'radial-gradient(ellipse at 30% 40%, #d1fae5 0%, #6ee7b7 40%, #047857 80%, #022c22 100%)',
+    // earthy green nebula — sage center to deep forest
+    stops: ['#d1fae5', '#6ee7b7', '#059669', '#064e3b', '#022c22'],
+    cx: ['40%','60%','50%'],
+    cy: ['30%','68%','48%'],
+    haloColor: 'rgba(16,185,129,0.5)',
+    shadowColor: 'rgba(6,95,70,0.35)',
   },
   rose: {
-    base:   'radial-gradient(ellipse at 35% 30%, #fda4af 0%, #f43f5e 40%, #be123c 75%, #4c0519 100%)',
-    halo:   '#f43f5e',
-    user:   'radial-gradient(ellipse at 40% 25%, #fecdd3 0%, #fb7185 35%, #e11d48 70%, #881337 100%)',
-    ai:     'radial-gradient(ellipse at 30% 40%, #ffe4e6 0%, #fda4af 40%, #be123c 80%, #4c0519 100%)',
+    // warm pink nebula — blush center to deep rose-crimson
+    stops: ['#ffe4e6', '#fda4af', '#f43f5e', '#9f1239', '#4c0519'],
+    cx: ['36%','64%','50%'],
+    cy: ['27%','72%','47%'],
+    haloColor: 'rgba(244,63,94,0.5)',
+    shadowColor: 'rgba(159,18,57,0.35)',
   },
 };
 
-/* ── Grain texture data URI (SVG fractal noise) ──────────── */
-const GRAIN_URI = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`;
+/* ── Unique filter IDs to avoid DOM conflicts ────────────── */
+let _filterId = 0;
+const nextFilterId = () => `grain-${++_filterId}`;
+
+/* ── Orb — the actual ElevenLabs-style blob ──────────────── */
+function GrainOrb({ colorKey, size, scale, opacity = 1 }) {
+  const oc = ORB_COLORS[colorKey];
+  const filterId = useRef(nextFilterId()).current;
+  const [s0, s1, s2, s3, s4] = oc.stops;
+  const [cx0, cx1, cx2] = oc.cx;
+  const [cy0, cy1, cy2] = oc.cy;
+  const half = size / 2;
+
+  return (
+    <div
+      style={{
+        width: size, height: size,
+        borderRadius: '50%',
+        transform: `scale(${scale})`,
+        transition: 'transform 0.1s ease-out',
+        willChange: 'transform',
+        position: 'relative',
+        overflow: 'hidden',
+        flexShrink: 0,
+        boxShadow: `0 24px 70px ${oc.shadowColor}, 0 8px 30px ${oc.shadowColor}`,
+        opacity,
+      }}
+    >
+      {/* Multi-layer atmospheric gradient via SVG — most accurate to ElevenLabs */}
+      <svg
+        width={size} height={size}
+        style={{ position: 'absolute', inset: 0, borderRadius: '50%' }}
+      >
+        <defs>
+          {/* Main atmospheric gradient */}
+          <radialGradient id={`g0-${filterId}`} cx={cx0} cy={cy0} r="65%" gradientUnits="userSpaceOnUse"
+            x1="0" y1="0" x2={size} y2={size}>
+            <stop offset="0%"   stopColor={s0} />
+            <stop offset="28%"  stopColor={s1} />
+            <stop offset="60%"  stopColor={s2} />
+            <stop offset="85%"  stopColor={s3} />
+            <stop offset="100%" stopColor={s4} />
+          </radialGradient>
+          {/* Second gradient from opposite corner for depth */}
+          <radialGradient id={`g1-${filterId}`} cx={cx1} cy={cy1} r="55%" gradientUnits="userSpaceOnUse"
+            x1="0" y1="0" x2={size} y2={size}>
+            <stop offset="0%"   stopColor={s4} stopOpacity="0.7" />
+            <stop offset="50%"  stopColor={s3} stopOpacity="0.4" />
+            <stop offset="100%" stopColor={s2} stopOpacity="0" />
+          </radialGradient>
+          {/* Grain filter */}
+          <filter id={`gf-${filterId}`} x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.68" numOctaves="4" seed="2" stitchTiles="stitch" result="noise" />
+            <feColorMatrix type="saturate" values="0" in="noise" result="greyNoise" />
+            <feBlend in="SourceGraphic" in2="greyNoise" mode="overlay" result="blended" />
+            <feComposite in="blended" in2="SourceGraphic" operator="in" />
+          </filter>
+        </defs>
+
+        {/* Base layer — main gradient */}
+        <circle cx={half} cy={half} r={half} fill={`url(#g0-${filterId})`} />
+        {/* Depth layer — darkens edges from opposite side */}
+        <circle cx={half} cy={half} r={half} fill={`url(#g1-${filterId})`} />
+        {/* Grain overlay — the key to the ElevenLabs look */}
+        <circle cx={half} cy={half} r={half} fill={`url(#g0-${filterId})`}
+          filter={`url(#gf-${filterId})`} opacity="1" />
+        {/* Top-left soft highlight */}
+        <radialGradient id={`hi-${filterId}`} cx="32%" cy="26%" r="40%">
+          <stop offset="0%"   stopColor="white" stopOpacity="0.32" />
+          <stop offset="100%" stopColor="white" stopOpacity="0" />
+        </radialGradient>
+        <circle cx={half} cy={half} r={half} fill={`url(#hi-${filterId})`} />
+      </svg>
+    </div>
+  );
+}
 
 /* ── Conversation Visualizer — ElevenLabs style ──────────── */
 function ConversationVisualizer({ isConnected, colorKey, speaker, amplitudeRef, tickAudio, timeLeft, agentName }) {
-  const orbRef    = useRef(null);
-  const haloRef   = useRef(null);
-  const rafRef    = useRef(null);
-  const phaseRef  = useRef(0);
+  const orbWrapRef = useRef(null);
+  const haloRef    = useRef(null);
+  const rafRef     = useRef(null);
 
   const sc       = SVG_COLORS[colorKey];
-  const og       = ORB_GRADIENTS[colorKey];
+  const oc       = ORB_COLORS[colorKey];
   const progress = timeLeft / CALL_LIMIT;
-  const SIZE     = 260;
-  const ORB_SIZE = 170;
+  const SIZE     = 280;
+  const ORB_SIZE = 180;
   const RING_R   = (SIZE - 10) / 2;
   const CIRC     = 2 * Math.PI * RING_R;
 
@@ -329,43 +410,32 @@ function ConversationVisualizer({ isConnected, colorKey, speaker, amplitudeRef, 
       tickAudio();
       const amp = amplitudeRef.current;
       const t   = Date.now() / 1000;
-      phaseRef.current = t;
 
-      let orbScale, haloScale, haloOpacity, haloBlur;
+      let scale, haloScale, haloOpacity;
 
       if (isUser) {
-        // Amplitude-driven — grows with voice intensity
-        const punch  = Math.min(0.22, amp * 0.28);
-        orbScale     = 1 + punch;
-        haloScale    = 1 + punch * 1.8;
-        haloOpacity  = 0.35 + amp * 0.35;
-        haloBlur     = 28 + amp * 20;
+        const punch = Math.min(0.24, amp * 0.3);
+        scale       = 1 + punch;
+        haloScale   = 1 + punch * 2;
+        haloOpacity = 0.4 + amp * 0.4;
       } else if (isAI) {
-        // Slow rhythmic breathing — 2.5s period
-        const wave   = (Math.sin(t * 2.5) + 1) / 2;
-        orbScale     = 1 + wave * 0.1;
-        haloScale    = 1 + wave * 0.18;
-        haloOpacity  = 0.25 + wave * 0.2;
-        haloBlur     = 24 + wave * 12;
+        const wave  = (Math.sin(t * 2.2) + 1) / 2;
+        scale       = 1 + wave * 0.1;
+        haloScale   = 1 + wave * 0.2;
+        haloOpacity = 0.28 + wave * 0.22;
       } else {
-        // Very gentle idle breath — 4s period
-        const idle   = (Math.sin(t * 1.5) + 1) / 2;
-        orbScale     = 1 + idle * 0.03;
-        haloScale    = 1 + idle * 0.05;
-        haloOpacity  = 0.12 + idle * 0.06;
-        haloBlur     = 20;
+        const idle  = (Math.sin(t * 1.4) + 1) / 2;
+        scale       = 1 + idle * 0.025;
+        haloScale   = 1 + idle * 0.04;
+        haloOpacity = 0.14 + idle * 0.06;
       }
 
-      if (orbRef.current) {
-        orbRef.current.style.transform = `scale(${orbScale.toFixed(4)})`;
-        // Shift gradient based on speaker
-        const grad = isUser ? og.user : isAI ? og.ai : og.base;
-        orbRef.current.style.background = grad;
+      if (orbWrapRef.current) {
+        orbWrapRef.current.style.transform = `scale(${scale.toFixed(4)})`;
       }
       if (haloRef.current) {
-        haloRef.current.style.transform = `translate(-50%, -50%) scale(${haloScale.toFixed(4)})`;
+        haloRef.current.style.transform = `scale(${haloScale.toFixed(4)})`;
         haloRef.current.style.opacity   = haloOpacity.toFixed(4);
-        haloRef.current.style.filter    = `blur(${haloBlur.toFixed(1)}px)`;
       }
 
       rafRef.current = requestAnimationFrame(animate);
@@ -373,12 +443,12 @@ function ConversationVisualizer({ isConnected, colorKey, speaker, amplitudeRef, 
 
     rafRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(rafRef.current);
-  }, [isConnected, isUser, isAI, amplitudeRef, tickAudio, og]);
+  }, [isConnected, isUser, isAI, amplitudeRef, tickAudio]);
 
   return (
     <div className="flex flex-col items-center gap-5">
 
-      {/* Main orb canvas */}
+      {/* Canvas */}
       <div className="relative flex items-center justify-center" style={{ width: SIZE, height: SIZE }}>
 
         {/* Countdown ring */}
@@ -389,13 +459,10 @@ function ConversationVisualizer({ isConnected, colorKey, speaker, amplitudeRef, 
               <stop offset="100%" stopColor={sc.c2} />
             </linearGradient>
           </defs>
-          <circle cx={SIZE/2} cy={SIZE/2} r={RING_R}
-            fill="none" stroke="rgba(0,0,0,0.06)" strokeWidth="3" />
-          <circle cx={SIZE/2} cy={SIZE/2} r={RING_R}
-            fill="none" stroke={`url(#pg-${colorKey})`} strokeWidth="3"
-            strokeLinecap="round"
-            strokeDasharray={CIRC}
-            strokeDashoffset={CIRC - progress * CIRC}
+          <circle cx={SIZE/2} cy={SIZE/2} r={RING_R} fill="none" stroke="rgba(0,0,0,0.06)" strokeWidth="3" />
+          <circle cx={SIZE/2} cy={SIZE/2} r={RING_R} fill="none"
+            stroke={`url(#pg-${colorKey})`} strokeWidth="3" strokeLinecap="round"
+            strokeDasharray={CIRC} strokeDashoffset={CIRC - progress * CIRC}
             style={{ transition: 'stroke-dashoffset 0.6s ease' }}
           />
         </svg>
@@ -405,82 +472,38 @@ function ConversationVisualizer({ isConnected, colorKey, speaker, amplitudeRef, 
           ref={haloRef}
           className="absolute rounded-full pointer-events-none"
           style={{
-            left: '50%', top: '50%',
-            width: ORB_SIZE + 60, height: ORB_SIZE + 60,
-            marginLeft: -(ORB_SIZE + 60) / 2, marginTop: -(ORB_SIZE + 60) / 2,
-            background: `radial-gradient(circle, ${og.halo}55 0%, ${og.halo}22 50%, transparent 75%)`,
-            filter: 'blur(24px)',
-            transform: 'translate(-50%, -50%) scale(1)',
-            opacity: 0.15,
-            willChange: 'transform, opacity, filter',
+            width: ORB_SIZE + 80, height: ORB_SIZE + 80,
+            background: `radial-gradient(circle, ${oc.haloColor} 0%, transparent 70%)`,
+            filter: 'blur(28px)',
+            opacity: 0.18,
+            willChange: 'transform, opacity',
           }}
         />
 
-        {/* The orb itself — ElevenLabs style */}
+        {/* Orb wrapper (scale driven by RAF) */}
         <div
-          ref={orbRef}
-          className="relative rounded-full overflow-hidden"
-          style={{
-            width: ORB_SIZE,
-            height: ORB_SIZE,
-            background: og.base,
-            boxShadow: `0 20px 60px ${og.halo}40, 0 4px 20px ${og.halo}30`,
-            transition: 'transform 0.08s ease-out',
-            willChange: 'transform, background',
-          }}
+          ref={orbWrapRef}
+          style={{ willChange: 'transform' }}
         >
-          {/* Grain texture overlay */}
-          <div
-            className="absolute inset-0 rounded-full pointer-events-none"
-            style={{
-              backgroundImage: GRAIN_URI,
-              backgroundSize: '200px 200px',
-              mixBlendMode: 'overlay',
-              opacity: 0.18,
-            }}
-          />
-          {/* Top-left highlight for depth */}
-          <div
-            className="absolute pointer-events-none"
-            style={{
-              top: '12%', left: '18%',
-              width: '38%', height: '28%',
-              background: 'radial-gradient(ellipse, rgba(255,255,255,0.45) 0%, transparent 70%)',
-              filter: 'blur(4px)',
-            }}
-          />
-          {/* Bottom shadow for depth */}
-          <div
-            className="absolute pointer-events-none"
-            style={{
-              bottom: '8%', left: '15%', right: '15%',
-              height: '30%',
-              background: 'radial-gradient(ellipse, rgba(0,0,0,0.25) 0%, transparent 70%)',
-              filter: 'blur(8px)',
-            }}
-          />
+          <GrainOrb colorKey={colorKey} size={ORB_SIZE} scale={1} />
         </div>
       </div>
 
-      {/* Speaker status */}
+      {/* Speaker label */}
       <AnimatePresence mode="wait">
         <motion.div
           key={speaker}
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -5 }}
-          transition={{ duration: 0.2 }}
+          transition={{ duration: 0.22 }}
           className="flex items-center gap-2.5"
         >
           <span className="relative flex h-2.5 w-2.5">
-            <span
-              className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-50"
-              style={{ backgroundColor: isSpeaking ? sc.c1 : '#cbd5e1' }}
-            />
-            <span
-              className="relative inline-flex rounded-full h-2.5 w-2.5"
-              style={{ backgroundColor: isSpeaking ? sc.c1 : '#cbd5e1' }}
-            />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-50"
+              style={{ backgroundColor: isSpeaking ? sc.c1 : '#cbd5e1' }} />
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5"
+              style={{ backgroundColor: isSpeaking ? sc.c1 : '#cbd5e1' }} />
           </span>
           <span className="text-[14px] font-semibold text-slate-700 tracking-tight">
             {isUser ? 'You are speaking' : isAI ? `${agentName} is speaking` : 'Listening…'}
@@ -886,43 +909,19 @@ export default function VoiceDemoSection() {
                         exit={{ opacity: 0, scale: 0.9 }}
                         className="flex flex-col items-center gap-5"
                       >
-                        {/* Idle orb — ElevenLabs style, gentle CSS breathing */}
-                        <div className="relative flex items-center justify-center" style={{ width: 220, height: 220 }}>
-                          {/* Outer glow */}
-                          <div
-                            className="absolute rounded-full pointer-events-none"
-                            style={{
-                              width: 200, height: 200,
-                              background: `radial-gradient(circle, ${ORB_GRADIENTS[industry.color].halo}30 0%, transparent 70%)`,
-                              filter: 'blur(20px)',
-                              animation: 'idle-breathe 4s ease-in-out infinite',
-                              opacity: isFailed ? 0.3 : 0.6,
-                            }}
+                        {/* Idle orb — same GrainOrb, gentle breathing via CSS */}
+                        <div
+                          style={{
+                            animation: 'idle-breathe 4s ease-in-out infinite',
+                            filter: `drop-shadow(0 16px 40px ${ORB_COLORS[industry.color].shadowColor})`,
+                          }}
+                        >
+                          <GrainOrb
+                            colorKey={industry.color}
+                            size={175}
+                            scale={1}
+                            opacity={isFailed ? 0.45 : 1}
                           />
-                          {/* The orb */}
-                          <div
-                            className="relative rounded-full overflow-hidden"
-                            style={{
-                              width: 160, height: 160,
-                              background: ORB_GRADIENTS[industry.color].base,
-                              boxShadow: `0 16px 50px ${ORB_GRADIENTS[industry.color].halo}35`,
-                              animation: 'idle-breathe 4s ease-in-out infinite',
-                              opacity: isFailed ? 0.45 : 1,
-                            }}
-                          >
-                            {/* Grain */}
-                            <div
-                              className="absolute inset-0 rounded-full pointer-events-none"
-                              style={{
-                                backgroundImage: GRAIN_URI,
-                                backgroundSize: '200px 200px',
-                                mixBlendMode: 'overlay',
-                                opacity: 0.18,
-                              }}
-                            />
-                            {/* Highlight */}
-                            <div className="absolute pointer-events-none" style={{ top:'12%', left:'18%', width:'38%', height:'28%', background:'radial-gradient(ellipse, rgba(255,255,255,0.4) 0%, transparent 70%)', filter:'blur(4px)' }} />
-                          </div>
                         </div>
                         <div className="text-[14px] text-slate-500 text-center font-medium tracking-tight">
                           {isFailed ? 'Connection failed — retry' : 'Ready to talk'}
