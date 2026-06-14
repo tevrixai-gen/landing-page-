@@ -237,7 +237,13 @@ function useAudioCapture() {
     }
   }, [updateSpeaker]);
 
-  return { speaker, smoothedRef, amplitudeRef, start, stop, tick, hasMicRef };
+  // Allow external code to set speaker state directly (used when we don't
+  // own the mic and can't do VAD ourselves).
+  const setSpeakerManual = useCallback((val) => {
+    updateSpeaker(val);
+  }, [updateSpeaker]);
+
+  return { speaker, smoothedRef, amplitudeRef, start, stop, tick, hasMicRef, setSpeakerManual };
 }
 
 
@@ -513,7 +519,7 @@ export default function VoiceDemoSection() {
   const timerRef  = useRef(null);
   const cleanupFn = useRef(null);
 
-  const { speaker, amplitudeRef, smoothedRef, start: startAudio, stop: stopAudio, tick: tickAudio } = useAudioCapture();
+  const { speaker, amplitudeRef, smoothedRef, stop: stopAudio, tick: tickAudio, setSpeakerManual } = useAudioCapture();
 
   const industry = INDUSTRIES.find(i => i.id === activeId);
   const colors   = COLOR_MAP[industry.color];
@@ -523,6 +529,7 @@ export default function VoiceDemoSection() {
     if (cleanupFn.current) cleanupFn.current();
     if (timerRef.current)  clearInterval(timerRef.current);
     stopAudio();
+    setSpeakerManual('idle');
     setStatus('loading');
     setTimeLeft(CALL_LIMIT);
 
@@ -537,22 +544,28 @@ export default function VoiceDemoSection() {
           else if (s === 'idle') {
             clearInterval(timerRef.current);
             stopAudio();
+            setSpeakerManual('idle');
             setStatus('ready');
             setTimeLeft(CALL_LIMIT);
           } else if (s === 'failed') {
             clearInterval(timerRef.current);
             stopAudio();
+            setSpeakerManual('idle');
             setStatus('failed');
           }
         });
         widget.onCallConnected?.(() => {
-          startAudio();
+          // Do NOT call startAudio() here — Dograh's WebRTC already owns the
+          // mic. Opening a second getUserMedia stream can steal the mic track
+          // from Dograh, causing it to stop hearing the user.
+          setSpeakerManual('ai'); // AI always greets first
           setTimeLeft(CALL_LIMIT);
           timerRef.current = setInterval(() => {
             setTimeLeft(prev => {
               if (prev <= 1) {
                 clearInterval(timerRef.current);
                 stopAudio();
+                setSpeakerManual('idle');
                 try { window.DograhWidget?.end(); } catch {}
                 setStatus('ended');
                 return 0;
@@ -564,19 +577,21 @@ export default function VoiceDemoSection() {
         widget.onCallDisconnected?.(() => {
           clearInterval(timerRef.current);
           stopAudio();
+          setSpeakerManual('idle');
           setStatus('ready');
           setTimeLeft(CALL_LIMIT);
         });
         widget.onError?.(() => {
           clearInterval(timerRef.current);
           stopAudio();
+          setSpeakerManual('idle');
           setStatus('failed');
         });
       },
       () => { setStatus('failed'); }
     );
     cleanupFn.current = cancel;
-  }, [startAudio, stopAudio]);
+  }, [stopAudio, setSpeakerManual]);
 
   useEffect(() => {
     initWidget(activeId);
